@@ -5,6 +5,7 @@ Grab-bag of PowerShell scripts for automating my own workflow.
 ## Scripts
 
 - **Get-RepoDigest.ps1** - build a single Markdown digest of GitHub and/or local repos (metadata, file tree, README) for uploading to Claude.
+- **Get-RfsRepos.ps1** - list every repo for an owner with description and status flags, as a table, objects, CSV, JSON or Markdown.
 - **Review-GitHubRepos.ps1** - walk through GitHub repos one at a time and delete, archive or keep each.
 
 ## Usage
