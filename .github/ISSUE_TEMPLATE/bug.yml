@@ -1,0 +1,33 @@
+name: Bug
+description: A script did the wrong thing or failed
+body:
+  - type: input
+    id: command
+    attributes:
+      label: Command
+      description: The exact line you ran.
+      placeholder: .\Get-RepoList.ps1 -Owner my-org -Format Csv
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: Paste the output or the error. Take out any repo names you'd rather not share.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      description: Output of `$PSVersionTable.PSVersion` and `gh --version`, plus the OS.
+      placeholder: 5.1.26100 · gh 2.89.0 · Windows 11 24H2
+    validations:
+      required: true

@@ -1,0 +1,49 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: ${{ matrix.os }} / ${{ matrix.shell }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: windows-latest, shell: powershell }
+          - { os: windows-latest, shell: pwsh }
+          - { os: ubuntu-latest, shell: pwsh }
+    defaults:
+      run:
+        shell: ${{ matrix.shell }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Versions
+        run: $PSVersionTable | Format-Table -AutoSize | Out-String -Width 200
+
+      - name: Install Pester and PSScriptAnalyzer
+        run: |
+          Set-PSRepository PSGallery -InstallationPolicy Trusted
+          Install-Module Pester -RequiredVersion 5.7.1 -Scope CurrentUser -Force -SkipPublisherCheck
+          Install-Module PSScriptAnalyzer -RequiredVersion 1.25.0 -Scope CurrentUser -Force
+
+      - name: Lint
+        run: |
+          $found = Invoke-ScriptAnalyzer -Path . -Settings ./PSScriptAnalyzerSettings.psd1
+          $found | Format-Table -AutoSize | Out-String -Width 200
+          if ($found) { exit 1 }
+
+      - name: Test
+        run: |
+          Import-Module Pester -RequiredVersion 5.7.1
+          $c = New-PesterConfiguration
+          $c.Run.Path = './tests'
+          $c.Run.Exit = $true
+          $c.Output.Verbosity = 'Detailed'
+          Invoke-Pester -Configuration $c

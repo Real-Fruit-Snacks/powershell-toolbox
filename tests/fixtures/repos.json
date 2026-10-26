@@ -1,0 +1,34 @@
+[
+  {
+    "name": "alpha-tool", "nameWithOwner": "test-owner/alpha-tool",
+    "description": "Pipes | and\nnewlines, café", "visibility": "PUBLIC",
+    "isPrivate": false, "isArchived": false, "isFork": false, "isTemplate": false, "isEmpty": false,
+    "primaryLanguage": { "name": "PowerShell" }, "pushedAt": "2026-10-01T12:00:00Z",
+    "stargazerCount": 3, "diskUsage": 2048, "url": "https://github.com/test-owner/alpha-tool",
+    "repositoryTopics": [ { "name": "powershell" }, { "name": "automation" } ]
+  },
+  {
+    "name": "old-archive", "nameWithOwner": "test-owner/old-archive",
+    "description": "Archived thing", "visibility": "PRIVATE",
+    "isPrivate": true, "isArchived": true, "isFork": false, "isTemplate": false, "isEmpty": false,
+    "primaryLanguage": null, "pushedAt": "2020-01-01T00:00:00Z",
+    "stargazerCount": 0, "diskUsage": 10, "url": "https://github.com/test-owner/old-archive",
+    "repositoryTopics": null
+  },
+  {
+    "name": "forked-lib", "nameWithOwner": "test-owner/forked-lib",
+    "description": null, "visibility": "PUBLIC",
+    "isPrivate": false, "isArchived": false, "isFork": true, "isTemplate": false, "isEmpty": false,
+    "primaryLanguage": { "name": "Go" }, "pushedAt": "2025-05-05T00:00:00Z",
+    "stargazerCount": 0, "diskUsage": 5000000, "url": "https://github.com/test-owner/forked-lib",
+    "repositoryTopics": null
+  },
+  {
+    "name": "no-readme", "nameWithOwner": "test-owner/no-readme",
+    "description": "", "visibility": "PRIVATE",
+    "isPrivate": true, "isArchived": false, "isFork": false, "isTemplate": true, "isEmpty": true,
+    "primaryLanguage": null, "pushedAt": null,
+    "stargazerCount": 0, "diskUsage": 0, "url": "https://github.com/test-owner/no-readme",
+    "repositoryTopics": null
+  }
+]

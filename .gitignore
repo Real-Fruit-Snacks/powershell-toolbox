@@ -1,5 +1,7 @@
-repos-digest.md
-repo-review-*.log
-repos.md
-repos.csv
-repos.json
+# Script output, when run from the repo root
+/repos-digest.md
+/repo-review-*.log
+/repos.md
+/repos.csv
+/repos.json
+/repos.xml
