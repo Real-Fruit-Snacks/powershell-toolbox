@@ -1,6 +1,6 @@
 # powershell-toolbox
 
-PowerShell scripts for auditing GitHub repos
+A grab-bag of my PowerShell scripts, each one standalone
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/cover-dark.svg">
@@ -11,7 +11,9 @@ PowerShell scripts for auditing GitHub repos
 cd $HOME\Projects; git clone https://github.com/Real-Fruit-Snacks/powershell-toolbox; cd powershell-toolbox
 ```
 
-I had a lot of repos, some of them dead, and no quick way to see them all at once. These scripts wrap the [GitHub CLI](https://cli.github.com/), so they see whatever your `gh` login sees, private repos included. Each script stands alone: copy one out and it still runs. They assume `gh` is installed and logged in (`gh auth login`), and that your projects live in `C:\Users\<you>\Projects`: every file they write goes there, and `Get-RepoDigest.ps1 -Local` scans it.
+The PowerShell scripts I keep, whatever they happen to be for. Each one stands alone: copy one out and it still runs. They assume your projects live in `C:\Users\<you>\Projects`, and every file they write goes there.
+
+The current set is for GitHub repos: I had a lot of them, some dead, and no quick way to see them all at once. These wrap the [GitHub CLI](https://cli.github.com/), so they see whatever your `gh` login sees, private repos included, and need `gh` installed and logged in (`gh auth login`). `Get-RepoDigest.ps1 -Local` also scans your projects folder.
 
 ## What's in it
 
