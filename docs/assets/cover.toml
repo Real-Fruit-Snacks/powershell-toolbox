@@ -1,0 +1,14 @@
+# Cover + social preview. Regenerate with Real-Fruit-Snacks/.github, from the folder holding both clones:
+#   python3 .github/tools/make-cover.py powershell-toolbox/docs/assets/cover.toml
+name        = "powershell-toolbox"
+description = "PowerShell scripts for auditing GitHub repos."
+bullets = [
+  "List every repo with status flags, five formats",
+  "One Markdown digest of repos for an LLM upload",
+  "Review repos one by one: delete, archive, keep",
+  "Windows PowerShell 5.1 and PowerShell 7, via gh",
+]
+
+[panel]
+kind = "art"
+file = "cover-art.svg"

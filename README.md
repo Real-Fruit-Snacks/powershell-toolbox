@@ -1,13 +1,11 @@
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Real-Fruit-Snacks/.github/main/assets/rfs-lockup-dark.svg">
-    <img alt="RFS" src="https://raw.githubusercontent.com/Real-Fruit-Snacks/.github/main/assets/rfs-lockup-light.svg" height="40">
-  </picture>
-</p>
-
 # powershell-toolbox
 
 PowerShell scripts for auditing GitHub repos
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/cover-dark.svg">
+  <img alt="Invoke-RepoReview.ps1 in a PowerShell window: repo 3 of 14 shown with its size and last push, archived with A, then the next repo" src="docs/assets/cover-light.svg" width="100%">
+</picture>
 
 ```powershell
 cd $HOME\Projects; git clone https://github.com/Real-Fruit-Snacks/powershell-toolbox; cd powershell-toolbox
