@@ -19,6 +19,7 @@ First public release.
 - `Get-RepoList.ps1 -Format Json` returned an object, not an array, for one repo. Markdown output did not escape newlines in descriptions.
 - `Get-RepoDigest.ps1` matched build-folder exclusions with `\` only, so on Linux and macOS it counted `node_modules` files.
 - A repo that was never pushed (`pushedAt` empty) no longer breaks the review sort.
+- On Windows `Get-RepoDigest.ps1` wrote CRLF for its own lines and kept README text as it came, so the digest had mixed line endings. It is LF throughout now.
 - `Get-RfsRepos.ps1` help had a non-ASCII `·` in a BOM-less file, which 5.1 reads as two garbage characters. All scripts are ASCII now.
 
 ### Added

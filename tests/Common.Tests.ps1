@@ -1,5 +1,7 @@
 BeforeDiscovery {
     $scripts = Get-ChildItem -Path (Split-Path $PSScriptRoot -Parent) -Filter '*.ps1' | ForEach-Object { @{ Name = $_.Name; Path = $_.FullName } }
+    # Test files too: 5.1 reads BOM-less UTF-8 as Windows-1252, and some of those bytes are quote characters.
+    $allPs = Get-ChildItem -Path (Split-Path $PSScriptRoot -Parent) -Include '*.ps1', '*.psd1' -Recurse | ForEach-Object { @{ Name = $_.FullName.Substring((Split-Path $PSScriptRoot -Parent).Length + 1); Path = $_.FullName } }
 }
 
 BeforeAll {
@@ -19,7 +21,7 @@ Describe 'Every script' {
         $errors | Should -BeNullOrEmpty
     }
 
-    It '<Name> is ASCII only, so Windows PowerShell 5.1 reads it the same without a BOM' -ForEach $scripts {
+    It '<Name> is ASCII only, so Windows PowerShell 5.1 reads it the same without a BOM' -ForEach $allPs {
         $bytes = [IO.File]::ReadAllBytes($Path)
         @($bytes | Where-Object { $_ -gt 127 }).Count | Should -Be 0
     }
@@ -138,5 +140,41 @@ Describe 'Invoke-Gh' {
         $r.Err | Should -Match '404'
         $r.Out | Should -BeNullOrEmpty
         $ErrorActionPreference | Should -Be 'Stop'
+    }
+}
+
+Describe 'ConvertFrom-GhJson' {
+    BeforeAll {
+        Invoke-Expression (Import-ScriptFunction -Path (Join-Path $RepoRoot 'Get-RepoList.ps1') -Name 'ConvertFrom-GhJson')
+    }
+
+    It 'emits one object per array element' {
+        $items = @(ConvertFrom-GhJson '[{"a":1},{"a":2},{"a":3}]')
+        $items.Count | Should -Be 3
+        $items[1].a | Should -Be 2
+    }
+
+    It 'does the same when ConvertFrom-Json hands back the array as one object, as Windows PowerShell 5.1 does' {
+        Mock ConvertFrom-Json { , @([pscustomobject]@{ a = 1 }, [pscustomobject]@{ a = 2 }) }
+        $items = @(ConvertFrom-GhJson '[{"a":1},{"a":2}]')
+        $items.Count | Should -Be 2
+        $items[0].a | Should -Be 1
+    }
+
+    It 'emits nothing for an empty array or empty text' {
+        @(ConvertFrom-GhJson '[]').Count | Should -Be 0
+        @(ConvertFrom-GhJson '').Count | Should -Be 0
+    }
+
+    It 'is the only place the scripts parse JSON' {
+        foreach ($f in Get-ChildItem -Path $RepoRoot -Filter '*.ps1') {
+            $ast = [System.Management.Automation.Language.Parser]::ParseFile($f.FullName, [ref]$null, [ref]$null)
+            $calls = $ast.FindAll({ param($n) $n -is [System.Management.Automation.Language.CommandAst] -and $n.GetCommandName() -eq 'ConvertFrom-Json' }, $true)
+            foreach ($c in $calls) {
+                $fn = $c.Parent
+                while ($fn -and $fn -isnot [System.Management.Automation.Language.FunctionDefinitionAst]) { $fn = $fn.Parent }
+                "$($f.Name):$($c.Extent.StartLineNumber) in $(if ($fn) { $fn.Name } else { 'script body' })" | Should -BeLike '* in ConvertFrom-GhJson'
+            }
+        }
     }
 }

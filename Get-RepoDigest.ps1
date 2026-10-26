@@ -156,6 +156,15 @@ function Resolve-OutputPath ([string] $Path) {
     if ($dir -and -not (Test-Path -LiteralPath $dir)) { New-Item -ItemType Directory -Path $dir -Force -WhatIf:$false | Out-Null }
     $full
 }
+
+function ConvertFrom-GhJson ([string] $Json) {
+    # One output object per element of a JSON array. Windows PowerShell 5.1's
+    # ConvertFrom-Json returns the whole array as a single object, so @(... | ConvertFrom-Json)
+    # holds one item there and N items on PowerShell 7. The foreach makes both the same.
+    if ([string]::IsNullOrWhiteSpace($Json)) { return }
+    $parsed = ConvertFrom-Json -InputObject $Json
+    foreach ($item in $parsed) { $item }
+}
 #endregion rfs-common
 
 $roots = @($LocalRoot)
@@ -167,7 +176,8 @@ if (-not $GitHub -and $roots.Count -eq 0) {
 if ($GitHub) { Assert-Gh }
 
 $sb = [System.Text.StringBuilder]::new()
-function Add-Line ([string] $Line = '') { [void]$sb.AppendLine($Line) }
+# LF on every OS. AppendLine would use CRLF on Windows and leave README text (LF) mixed in.
+function Add-Line ([string] $Line = '') { [void]$sb.Append(($Line -replace '\r\n', "`n")).Append("`n") }
 
 function Limit-Text ([string] $Text, [int] $Max) {
     if ([string]::IsNullOrEmpty($Text)) { return '' }
@@ -218,7 +228,7 @@ if ($GitHub) {
     $list = Invoke-Gh $ghArgs
     if ($list.ExitCode -ne 0) { throw "gh repo list failed:`n$($list.Err)" }
 
-    $repos = @(@($list.Out | ConvertFrom-Json) | Where-Object {
+    $repos = @(@(ConvertFrom-GhJson $list.Out) | Where-Object {
             ($IncludeArchived -or -not $_.isArchived) -and ($IncludeForks -or -not $_.isFork)
         } | Sort-Object pushedAt -Descending)
     if ($repos.Count -eq 0) { Write-Warning 'No GitHub repos matched.' }
@@ -250,7 +260,7 @@ if ($GitHub) {
 
         $tree = Invoke-Gh @('api', "repos/$($r.nameWithOwner)/contents")
         if ($tree.ExitCode -eq 0 -and $tree.Out) {
-            $names = @($tree.Out | ConvertFrom-Json) | ForEach-Object { $_ } |
+            $names = ConvertFrom-GhJson $tree.Out |
                 ForEach-Object { if ($_.type -eq 'dir') { "$($_.name)/" } else { $_.name } }
             Add-Line "- Top level: $($names -join ', ')"
         }

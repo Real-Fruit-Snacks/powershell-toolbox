@@ -155,6 +155,15 @@ function Resolve-OutputPath ([string] $Path) {
     if ($dir -and -not (Test-Path -LiteralPath $dir)) { New-Item -ItemType Directory -Path $dir -Force -WhatIf:$false | Out-Null }
     $full
 }
+
+function ConvertFrom-GhJson ([string] $Json) {
+    # One output object per element of a JSON array. Windows PowerShell 5.1's
+    # ConvertFrom-Json returns the whole array as a single object, so @(... | ConvertFrom-Json)
+    # holds one item there and N items on PowerShell 7. The foreach makes both the same.
+    if ([string]::IsNullOrWhiteSpace($Json)) { return }
+    $parsed = ConvertFrom-Json -InputObject $Json
+    foreach ($item in $parsed) { $item }
+}
 #endregion rfs-common
 
 Assert-Gh
@@ -187,7 +196,7 @@ $ghArgs += @('--limit', "$Limit", '--json', 'name,nameWithOwner,description,isPr
 Write-Ink 'Fetching repos' mute
 $list = Invoke-Gh $ghArgs
 if ($list.ExitCode -ne 0) { throw "gh repo list failed:`n$($list.Err)" }
-$repos = @(@($list.Out | ConvertFrom-Json) | ForEach-Object { $_ })
+$repos = @(ConvertFrom-GhJson $list.Out)
 
 if (-not $IncludeForks)    { $repos = @($repos | Where-Object { -not $_.isFork }) }
 if (-not $IncludeArchived) { $repos = @($repos | Where-Object { -not $_.isArchived }) }

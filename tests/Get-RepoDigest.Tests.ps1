@@ -34,7 +34,7 @@ Describe 'Get-RepoDigest' {
         }
 
         It 'keeps README text as UTF-8' {
-            $digest | Should -Match "Café — with a fence inside"
+            $digest | Should -Match 'Caf\u00e9 \u2014 with a fence inside'
         }
 
         It 'fences each README with more backticks than it contains' {
@@ -44,6 +44,10 @@ Describe 'Get-RepoDigest' {
         It 'writes push dates as dates on both PowerShell versions' {
             $digest | Should -Match '\| test-owner/alpha-tool \| PowerShell \| False \| 2026-10-01 \|'
             $digest | Should -Match '- Last push: 2026-10-01 12:00 UTC'
+        }
+
+        It 'uses LF line endings only, on every OS' {
+            $digest | Should -Not -Match "`r"
         }
 
         It 'notes a missing README instead of failing' {
@@ -86,7 +90,8 @@ Describe 'Get-RepoDigest' {
             $root = Join-Path $TestDrive 'src'
             $plain = Join-Path $root 'plain-folder'
             New-Item -ItemType Directory -Path (Join-Path $plain 'node_modules/dep') -Force | Out-Null
-            Set-Content -Path (Join-Path $plain 'README.md') -Value '# plain folder'
+            # CRLF on purpose, on every OS: the digest must still come out LF-only.
+            [IO.File]::WriteAllText((Join-Path $plain 'README.md'), "# plain folder`r`n`r`nSecond line`r`n")
             Set-Content -Path (Join-Path $plain 'main.py') -Value 'print(1)'
             Set-Content -Path (Join-Path $plain 'package.json') -Value '{}'
             1..5 | ForEach-Object { Set-Content -Path (Join-Path $plain "node_modules/dep/f$_.js") -Value 'x' }
@@ -103,6 +108,8 @@ Describe 'Get-RepoDigest' {
             $digest | Should -Match '## Local repos \(2\)'
             $digest | Should -Match '### plain-folder'
             $digest | Should -Match '- Manifests: package.json'
+            $digest | Should -Match "# plain folder`n`nSecond line"
+            $digest | Should -Not -Match "`r"
         }
 
         It 'leaves node_modules out of the file-type count' {

@@ -61,7 +61,7 @@ Describe 'Get-RepoList' {
         $bytes = [IO.File]::ReadAllBytes($out)
         $bytes[0] | Should -Not -Be 0xEF
         (Import-Csv $out).Count | Should -Be 4
-        [IO.File]::ReadAllText($out) | Should -Match 'café'
+        [IO.File]::ReadAllText($out) | Should -Match 'caf\u00e9'
     }
 
     It 'writes a relative -OutFile into the projects folder' {
