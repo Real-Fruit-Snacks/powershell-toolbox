@@ -29,9 +29,11 @@ jobs:
 
       - name: Install Pester and PSScriptAnalyzer
         run: |
-          Set-PSRepository PSGallery -InstallationPolicy Trusted
-          # The PowerShell Gallery drops a download now and then ("failed to download").
-          # Try each module up to 4 times, 10/20/30 s apart, before failing the job.
+          # The PowerShell Gallery is flaky from hosted runners in two ways: a download fails
+          # ("failed to download"), or the gallery was unreachable when PowerShellGet first
+          # loaded, so PSGallery is not registered at all ("No repository with the name
+          # 'PSGallery' was found"). Each try re-registers the gallery if it is missing, then
+          # installs. 5 tries, 15/30/45/60 s apart, before failing the job.
           $modules = @(
             @{ Name = 'Pester'; Version = '5.7.1' },
             @{ Name = 'PSScriptAnalyzer'; Version = '1.25.0' }
@@ -39,13 +41,18 @@ jobs:
           foreach ($m in $modules) {
             for ($try = 1; $true; $try++) {
               try {
-                Install-Module $m.Name -RequiredVersion $m.Version -Scope CurrentUser -Force -SkipPublisherCheck -ErrorAction Stop
+                if (-not (Get-PSRepository -Name PSGallery -ErrorAction SilentlyContinue)) {
+                  Write-Host 'PSGallery is not registered; registering it'
+                  Register-PSRepository -Default -ErrorAction Stop
+                }
+                Set-PSRepository -Name PSGallery -InstallationPolicy Trusted -ErrorAction Stop
+                Install-Module $m.Name -RequiredVersion $m.Version -Repository PSGallery -Scope CurrentUser -Force -SkipPublisherCheck -ErrorAction Stop
                 Write-Host "Installed $($m.Name) $($m.Version) (try $try)"
                 break
               } catch {
-                if ($try -ge 4) { throw }
+                if ($try -ge 5) { throw }
                 Write-Warning "Installing $($m.Name) failed (try $try): $_"
-                Start-Sleep -Seconds (10 * $try)
+                Start-Sleep -Seconds (15 * $try)
               }
             }
           }
