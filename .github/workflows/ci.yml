@@ -22,7 +22,7 @@ jobs:
       run:
         shell: ${{ matrix.shell }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Versions
         run: $PSVersionTable | Format-Table -AutoSize | Out-String -Width 200
