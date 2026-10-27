@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>powershell-toolbox — a grab-bag of PowerShell scripts, each one standalone</title>
+<meta name="description" content="Standalone PowerShell scripts. The current set lists, digests and reviews your GitHub repos through the GitHub CLI. Windows PowerShell 5.1 and PowerShell 7.">
+<link rel="canonical" href="https://real-fruit-snacks.github.io/powershell-toolbox/">
+<meta property="og:title" content="powershell-toolbox">
+<meta property="og:description" content="A grab-bag of my PowerShell scripts, each one standalone">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://real-fruit-snacks.github.io/powershell-toolbox/">
+<meta property="og:image" content="https://real-fruit-snacks.github.io/powershell-toolbox/assets/cover-dark.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="560">
+<meta property="og:image:alt" content="Invoke-RepoReview.ps1 in a PowerShell window: repo 3 of 14 shown with its size and last push, archived with A, then the next repo">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/favicon.ico" sizes="48x48">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<meta name="theme-color" content="#0C0D10">
+<script>
+  // Theme before first paint: a saved choice wins, otherwise follow the OS.
+  (function () {
+    try {
+      var t = localStorage.getItem('rfs-theme');
+      if (t === 'nightshift' || t === 'dayshift') document.documentElement.setAttribute('data-theme', t);
+    } catch (e) {}
+  })();
+</script>
+<link rel="preload" href="assets/fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/ibm-plex-mono-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/rfs.css">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <a class="brand" href="https://real-fruit-snacks.github.io/" aria-label="RFS home">
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Real-Fruit-Snacks/rfs-brand/main/assets/rfs-lockup-dark.svg">
+        <img alt="RFS" src="https://raw.githubusercontent.com/Real-Fruit-Snacks/rfs-brand/main/assets/rfs-lockup-light.svg" data-lockup>
+      </picture>
+      <span class="sep" aria-hidden="true"></span>
+      <span class="name">powershell-toolbox</span>
+    </a>
+    <nav>
+      <a href="#install">Install</a>
+      <a href="#scripts">Scripts</a>
+      <a href="#config">Configuration</a>
+      <a class="keep" href="https://github.com/Real-Fruit-Snacks/powershell-toolbox">GitHub</a>
+      <button class="toggle" type="button" id="theme" aria-label="Switch between Nightshift and Dayshift"><span class="night">Nightshift</span><span class="day">Dayshift</span></button>
+    </nav>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="grid-bg" aria-hidden="true"></div>
+  <div class="glow" aria-hidden="true"></div>
+  <div class="wrap">
+    <div>
+      <p class="label">Windows PowerShell 5.1 · PowerShell 7 · GitHub CLI</p>
+      <h1 class="long">powershell-toolbox</h1>
+      <p class="lead">A grab-bag of my PowerShell scripts, each one standalone</p>
+      <p class="sub">The PowerShell scripts I keep, whatever they happen to be for. Copy one out and it still runs. They assume your projects live in <code>C:\Users\&lt;you&gt;\Projects</code>, and every file they write goes there.</p>
+
+      <div class="install" id="install">
+        <div class="tabs" role="tablist">
+          <button role="tab" aria-selected="true" data-pane="clone">Clone</button>
+          <button role="tab" aria-selected="false" data-pane="gh">GitHub CLI</button>
+        </div>
+        <div class="pane" data-active data-id="clone"><pre><code>cd $HOME\Projects; git clone https://github.com/Real-Fruit-Snacks/powershell-toolbox; cd powershell-toolbox</code></pre><button class="copy" data-copy="cd $HOME\Projects; git clone https://github.com/Real-Fruit-Snacks/powershell-toolbox; cd powershell-toolbox">Copy</button></div>
+        <div class="pane" data-id="gh"><pre><code>winget install GitHub.cli; gh auth login</code></pre><button class="copy" data-copy="winget install GitHub.cli; gh auth login">Copy</button></div>
+        <div class="foot">The current scripts wrap the <a href="https://cli.github.com/">GitHub CLI</a>, so they see whatever your <code>gh</code> login sees, private repos included.</div>
+      </div>
+    </div>
+    <div class="term" aria-label="Example: Invoke-RepoReview.ps1 archiving a repo">
+      <div class="bar"><i></i><i></i><i></i><span>pwsh</span></div>
+<pre><code><span class="p">PS&gt;</span> .\Invoke-RepoReview.ps1 -SortBy size
+Reviewing 14 repos, sorted by size.
+<span class="c">----------------------------------------------</span>
+<span class="p">[3/14]</span> Real-Fruit-Snacks/scratch-2024
+   <span class="c">private  48.2 MB   last push 2024-03-11</span>
+   Experiments, never finished
+   <span class="a">[D] delete [A] archive [K] keep [O] open in browser [Q] quit</span>
+<span class="a">A</span>
+   <span class="s">Archived.</span> Read-only now; unarchive from the
+   repo settings.
+<span class="c">----------------------------------------------</span>
+<span class="p">[4/14]</span> Real-Fruit-Snacks/old-dotfiles</code></pre>
+    </div>
+  </div>
+</div>
+
+<section id="scripts">
+  <div class="wrap">
+    <p class="label">Scripts</p>
+    <h2>The current set: your GitHub repos</h2>
+    <p class="mute" style="max-width:70ch">I had a lot of repos, some dead, and no quick way to see them all at once. <code>Get-Help .\&lt;script&gt;.ps1 -Full</code> lists every parameter.</p>
+    <div class="cards" style="margin-top:22px">
+      <div class="card"><h3>Get-RepoList.ps1</h3><p>Lists every repo for an owner with its visibility and flags (archived, fork, template, empty), as a table, objects, CSV, JSON or Markdown.</p></div>
+      <div class="card"><h3>Get-RepoDigest.ps1</h3><p>Writes one Markdown file of repo metadata and READMEs, from GitHub and/or your projects folder (<code>-Local</code>), to upload to an LLM.</p></div>
+      <div class="card"><h3>Invoke-RepoReview.ps1</h3><p>Steps through repos one by one: delete, archive, keep or open in the browser. Logs every decision. Asks you to type the name before a delete; <code>-WhatIf</code> changes nothing.</p></div>
+    </div>
+    <pre style="margin-top:22px"><code>.\Get-RepoList.ps1 -Owner Real-Fruit-Snacks -Format Markdown -OutFile repos.md   <span class="c"># -&gt; Projects\repos.md</span>
+.\Get-RepoDigest.ps1 -GitHub -Local                                              <span class="c"># -&gt; Projects\repos-digest.md</span>
+.\Invoke-RepoReview.ps1 -SortBy size -WhatIf                                     <span class="c"># log -&gt; Projects\repo-review-&lt;time&gt;.log</span>
+
+<span class="c"># if the execution policy blocks a script</span>
+powershell -ExecutionPolicy Bypass -File .\Get-RepoList.ps1</code></pre>
+  </div>
+</section>
+
+<section id="rules">
+  <div class="wrap two">
+    <div>
+      <p class="label">House rules</p>
+      <h2>Every script, every time</h2>
+    </div>
+    <ul class="plain">
+      <li>Standalone. A shared block of helpers is copied into each script, and a test keeps the copies identical.</li>
+      <li>Runs on Windows PowerShell 5.1 and PowerShell 7, ASCII only, so 5.1 never misreads a file.</li>
+      <li>Writes only under your projects folder, unless you pass an absolute path.</li>
+      <li>Anything destructive has <code>-WhatIf</code> and asks first.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="config">
+  <div class="wrap two">
+    <div>
+      <p class="label">Configuration</p>
+      <h2>Environment</h2>
+      <p class="mute">To set a different projects folder for good: <code>[Environment]::SetEnvironmentVariable('RFS_PROJECTS', 'D:\code', 'User')</code>, then open a new window.</p>
+    </div>
+    <table>
+      <tr><th>Variable</th><th>Effect</th></tr>
+      <tr><td>RFS_PROJECTS</td><td>Your projects folder. Default <code>$HOME\Projects</code>. Relative <code>-OutFile</code> and <code>-LogPath</code> values land here.</td></tr>
+      <tr><td>RFS_THEME</td><td><code>dayshift</code> for a light terminal; Nightshift is the default</td></tr>
+      <tr><td>NO_COLOR</td><td>Plain text, no colour</td></tr>
+    </table>
+  </div>
+</section>
+
+<section id="tested">
+  <div class="wrap two">
+    <div>
+      <p class="label">Tested on</p>
+      <ul class="plain">
+        <li>Ubuntu 24.04 · PowerShell 7.4.6 · Pester 5.7.1 and 6.2.0, against a stub <code>gh</code></li>
+        <li>Windows Server 2025 · Windows PowerShell 5.1 and PowerShell 7: the same suite in CI on every push</li>
+        <li><em>Not</em> tested: macOS. It should behave like Linux; I haven't checked.</li>
+      </ul>
+    </div>
+    <div>
+      <p class="label">Known issues</p>
+      <ul class="plain">
+        <li>Deleting needs the <code>delete_repo</code> scope on your <code>gh</code> token; <code>Invoke-RepoReview.ps1</code> offers to add it.</li>
+        <li>Delete has no undo here. GitHub keeps most deleted repos restorable for 90 days, but not forks.</li>
+        <li><code>Get-RepoDigest.ps1 -GitHub</code> makes two API calls per repo, so a third run within the hour can hit GitHub's rate limit at the 1,000-repo cap.</li>
+        <li>All three fetch at most 1,000 repos by default.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>MIT · <a href="https://github.com/Real-Fruit-Snacks/powershell-toolbox">Source</a> · <a href="https://github.com/Real-Fruit-Snacks/powershell-toolbox/blob/main/CHANGELOG.md">Changelog</a> · <a href="https://github.com/Real-Fruit-Snacks/powershell-toolbox/blob/main/SECURITY.md">Security</a></span>
+    <span><a href="https://real-fruit-snacks.github.io/">RFS</a> · Real tools. No filler. · <a href="https://github.com/Real-Fruit-Snacks/rfs-brand/blob/main/BRAND.md">Brand</a></span>
+  </div>
+</footer>
+
+<script src="assets/site.js"></script>
+</body>
+</html>
