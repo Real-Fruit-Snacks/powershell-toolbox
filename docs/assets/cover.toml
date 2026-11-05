@@ -1,14 +1,27 @@
 # Cover + social preview. Regenerate with Real-Fruit-Snacks/rfs-brand, from the folder holding both clones:
 #   python3 rfs-brand/tools/make-cover.py powershell-toolbox/docs/assets/cover.toml
+# Layout v2 (BRAND.md section 7): name, rule, the README one-liner, and one panel.
 name        = "powershell-toolbox"
-description = "A grab-bag of my PowerShell scripts, each one standalone."
-bullets = [
-  "Each script runs on its own: copy one out and go",
-  "Windows PowerShell 5.1 and PowerShell 7",
-  "Output lands in your Projects folder",
-  "Today: list, digest and review your GitHub repos",
-]
+description = "A grab-bag of my PowerShell scripts, each one standalone"   # README line 1
 
+# One step of Invoke-RepoReview.ps1: repo 3 of 14 goes in, you press A, it
+# comes out archived. The repo name and its size are the v1 cover's examples;
+# "Archived. Read-only now" is the script's own wording.
 [panel]
-kind = "art"
-file = "cover-art.svg"
+kind = "flow"
+
+[panel.input]
+label = "Real-Fruit-Snacks"
+note  = "repo 3 of 14"
+value = "scratch-2024"
+tone  = "text"
+
+[panel.tool]
+label = "Invoke-RepoReview.ps1"
+note  = "[A]"                      # the key you press: "[A] archive" in its prompt
+
+[panel.output]
+label = "GitHub"
+note  = "read-only now"
+value = "Archived"
+tone  = "mint"
