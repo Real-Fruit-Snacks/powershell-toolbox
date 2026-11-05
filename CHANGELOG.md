@@ -1,10 +1,12 @@
 # Changelog
 
-## Unreleased
+## v1.0.1 — 2026-11-05
+
+Dayshift colours match the current RFS palette, and the README and project page are new. The scripts take the same parameters and do the same things as in v1.0.0.
 
 ### Changed
 
-- Dayshift console colours (`RFS_THEME=dayshift`) now use the current RFS values: mute `#666A73`, Ember `#C03B0A`, Amber `#925F00`, Mint `#15794D`.
+- Dayshift console colours (`RFS_THEME=dayshift`) now use the current RFS values: Mute `#666A73`, Ember `#C03B0A`, Amber `#925F00`, Mint `#15794D`.
 - New README and project page: an index of the scripts, each name hung on its hyphen, beside real recorded runs. On the page you can step through a recorded `-WhatIf` review with the D, A, K, O and Q keys.
 
 ### Added
