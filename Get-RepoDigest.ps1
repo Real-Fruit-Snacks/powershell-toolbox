@@ -82,7 +82,7 @@ function Write-Ink {
     if ($env:NO_COLOR) { Write-Host $Text -NoNewline:$NoNewline; return }
     if ($Host.UI.SupportsVirtualTerminal) {
         $rgb = if ($dayshift) {
-            @{ text = '26;27;30'; mute = '107;111;120'; ember = '196;63;17'; amber = '154;103;0'; mint = '22;122;78' }
+            @{ text = '26;27;30'; mute = '102;106;115'; ember = '192;59;10'; amber = '146;95;0'; mint = '21;121;77' }
         } else {
             @{ text = '232;230;225'; mute = '138;143;153'; ember = '255;106;61'; amber = '255;194;71'; mint = '61;220;151' }
         }

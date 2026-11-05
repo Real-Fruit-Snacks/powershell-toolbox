@@ -76,7 +76,7 @@ Describe 'Write-Ink' {
     It 'switches to Dayshift values with RFS_THEME=dayshift' {
         $env:RFS_THEME = 'Dayshift'
         $record = Write-Ink 'ok' mint 6>&1
-        if ($Host.UI.SupportsVirtualTerminal) { $record.MessageData.Message | Should -Match '38;2;22;122;78m' }
+        if ($Host.UI.SupportsVirtualTerminal) { $record.MessageData.Message | Should -Match '38;2;21;121;77m' }
         else { $record.MessageData.ForegroundColor | Should -Be 'DarkGreen' }
     }
 
