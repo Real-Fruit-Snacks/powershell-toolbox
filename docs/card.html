@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<!-- The GitHub social preview, 1280 x 640. Render from the repo root with killer-repo's card.mjs:
+       node card.mjs docs/card.html --out docs/assets/social.png
+     The page's index, as a still: each script name hung on its hyphen, Invoke-RepoReview picked. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  @font-face { font-family: "Chivo"; font-weight: 100 900; src: url(fonts/chivo-latin-wght.woff2) format("woff2"); }
+  @font-face { font-family: "Chivo Mono"; font-weight: 100 900; src: url(fonts/chivo-mono-latin-wght.woff2) format("woff2"); }
+  html, body { margin: 0; width: 1280px; height: 640px; background: #0C0D10; overflow: hidden; color: #E8E6E1; }
+  body { box-sizing: border-box; padding: 64px 80px; display: flex; flex-direction: column; justify-content: space-between; }
+  .head { display: flex; justify-content: space-between; align-items: baseline; }
+  h1 { margin: 0; font: 700 44px/1 "Chivo", sans-serif; letter-spacing: -.01em; }
+  h1 span { color: #8A8F99; }
+  p { margin: 0; font: 400 28px/1.25 "Chivo", sans-serif; color: #8A8F99; text-align: right; }
+  .index { --n: 98px; display: grid; gap: 16px; font: 800 var(--n)/1 "Chivo", sans-serif; letter-spacing: -.01em; }
+  .nm { display: grid; grid-template-columns: calc(var(--n) * 3.36) calc(var(--n) * .4) auto; align-items: baseline; color: #636872; }
+  .nm b { font-weight: inherit; justify-self: end; }
+  .nm i { align-self: center; justify-self: center; width: 62%; height: .115em; margin-top: .06em; background: #636872; }
+  .nm small { font: 500 26px/1 "Chivo Mono", monospace; color: #636872; margin-left: 12px; }
+  .nm.on { color: #E8E6E1; }
+  .nm.on i { background: #FF6A3D; }
+  .nm.on small { color: #8A8F99; }
+</style>
+</head>
+<body>
+  <div class="head"><h1>powershell<span>-</span>toolbox</h1><p>A grab-bag of my PowerShell<br>scripts, each one standalone</p></div>
+  <div class="index">
+    <div class="nm"><b>Get</b><i></i><span>RepoList<small>.ps1</small></span></div>
+    <div class="nm"><b>Get</b><i></i><span>RepoDigest<small>.ps1</small></span></div>
+    <div class="nm on"><b>Invoke</b><i></i><span>RepoReview<small>.ps1</small></span></div>
+  </div>
+</body>
+</html>

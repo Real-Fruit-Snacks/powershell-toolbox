@@ -1,5 +1,18 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+
+- Dayshift console colours (`RFS_THEME=dayshift`) now use the current RFS values: mute `#666A73`, Ember `#C03B0A`, Amber `#925F00`, Mint `#15794D`.
+- New README and project page: an index of the scripts, each name hung on its hyphen, beside real recorded runs. On the page you can step through a recorded `-WhatIf` review with the D, A, K, O and Q keys.
+
+### Added
+
+- `docs/art`: `Record-Runs.ps1` records real runs (public repos only, archive and delete blocked), `make-art.py` turns them into the README art, the page's replay data and the transcripts. CI fails if they're out of date.
+- `tests/Docs.Tests.ps1`: the README and the page can only name parameters and values the scripts accept, and the page's synopses and parameter tables must match each script's help.
+- A monthly link check.
+
 ## v1.0.0 — 2026-10-26
 
 First public release.

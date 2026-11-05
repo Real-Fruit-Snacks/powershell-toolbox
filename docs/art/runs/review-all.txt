@@ -1,0 +1,138 @@
+<<recorded>>2026-11-05, Windows PowerShell 5.1.26100.9711, gh 2.102.0
+<<cmd>>.\Invoke-RepoReview.ps1 -SortBy size -WhatIf
+[38;2;138;143;153mFetching repos[0m
+[38;2;232;230;225m[0m
+[38;2;232;230;225mReviewing 16 repos, sorted by size. Dry run: nothing will change.[0m
+[38;2;138;143;153mLog: C:\Users\you\Projects\repo-review-20261105-053736.log[0m
+[38;2;232;230;225m[0m
+[38;2;138;143;153m----------------------------------------------------------------------[0m
+[38;2;255;106;61m[1/16] [0m[38;2;232;230;225mReal-Fruit-Snacks/open-file[0m
+[38;2;138;143;153m   public   26.6 MB   last push 2026-11-05 (0 days ago)[0m
+[38;2;232;230;225m   Learn and play chess in your browser, offline[0m
+[38;2;138;143;153m   https://github.com/Real-Fruit-Snacks/open-file[0m
+[38;2;232;230;225m[0m
+[38;2;255;194;71m   [D] delete   [A] archive   [K] keep   [O] open in browser   [Q] quit  [0mk
+[38;2;232;230;225m[0m
+[38;2;138;143;153m----------------------------------------------------------------------[0m
+[38;2;255;106;61m[2/16] [0m[38;2;232;230;225mReal-Fruit-Snacks/certapi[0m
+[38;2;138;143;153m   public   7.0 MB    last push 2026-11-05 (0 days ago)[0m
+[38;2;232;230;225m   mTLS API client for the Windows certificate store[0m
+[38;2;138;143;153m   https://github.com/Real-Fruit-Snacks/certapi[0m
+[38;2;232;230;225m[0m
+[38;2;255;194;71m   [D] delete   [A] archive   [K] keep   [O] open in browser   [Q] quit  [0mk
+[38;2;232;230;225m[0m
+[38;2;138;143;153m----------------------------------------------------------------------[0m
+[38;2;255;106;61m[3/16] [0m[38;2;232;230;225mReal-Fruit-Snacks/rfs-brand[0m
+[38;2;138;143;153m   public   3.2 MB    last push 2026-11-05 (0 days ago)[0m
+[38;2;232;230;225m   RFS brand, profile art and repo templates[0m
+[38;2;138;143;153m   https://github.com/Real-Fruit-Snacks/rfs-brand[0m
+[38;2;232;230;225m[0m
+[38;2;255;194;71m   [D] delete   [A] archive   [K] keep   [O] open in browser   [Q] quit  [0mk
+[38;2;232;230;225m[0m
+[38;2;138;143;153m----------------------------------------------------------------------[0m
+[38;2;255;106;61m[4/16] [0m[38;2;232;230;225mReal-Fruit-Snacks/screen-mark[0m
+[38;2;138;143;153m   public   2.0 MB    last push 2026-11-05 (0 days ago)[0m
+[38;2;232;230;225m   Screenshot capture and annotation in pure Rust[0m
+[38;2;138;143;153m   https://github.com/Real-Fruit-Snacks/screen-mark[0m
+[38;2;232;230;225m[0m
+[38;2;255;194;71m   [D] delete   [A] archive   [K] keep   [O] open in browser   [Q] quit  [0mk
+[38;2;232;230;225m[0m
+[38;2;138;143;153m----------------------------------------------------------------------[0m
+[38;2;255;106;61m[5/16] [0m[38;2;232;230;225mReal-Fruit-Snacks/amazon-order-sync[0m
+[38;2;138;143;153m   public   1.7 MB    last push 2026-11-05 (0 days ago)[0m
+[38;2;232;230;225m   Syncs your Amazon orders into local Markdown notes[0m
+[38;2;138;143;153m   https://github.com/Real-Fruit-Snacks/amazon-order-sync[0m
+[38;2;232;230;225m[0m
+[38;2;255;194;71m   [D] delete   [A] archive   [K] keep   [O] open in browser   [Q] quit  [0mk
+[38;2;232;230;225m[0m
+[38;2;138;143;153m----------------------------------------------------------------------[0m
+[38;2;255;106;61m[6/16] [0m[38;2;232;230;225mReal-Fruit-Snacks/identity-gen[0m
+[38;2;138;143;153m   public   1.5 MB    last push 2026-11-05 (0 days ago)[0m
+[38;2;232;230;225m   Offline generator for throwaway signup identities[0m
+[38;2;138;143;153m   https://github.com/Real-Fruit-Snacks/identity-gen[0m
+[38;2;232;230;225m[0m
+[38;2;255;194;71m   [D] delete   [A] archive   [K] keep   [O] open in browser   [Q] quit  [0mk
+[38;2;232;230;225m[0m
+[38;2;138;143;153m----------------------------------------------------------------------[0m
+[38;2;255;106;61m[7/16] [0m[38;2;232;230;225mReal-Fruit-Snacks/proxflow[0m
+[38;2;138;143;153m   public   1.4 MB    last push 2026-11-05 (0 days ago)[0m
+[38;2;232;230;225m   Proxmox map and lab builder that works offline[0m
+[38;2;138;143;153m   https://github.com/Real-Fruit-Snacks/proxflow[0m
+[38;2;232;230;225m[0m
+[38;2;255;194;71m   [D] delete   [A] archive   [K] keep   [O] open in browser   [Q] quit  [0mk
+[38;2;232;230;225m[0m
+[38;2;138;143;153m----------------------------------------------------------------------[0m
+[38;2;255;106;61m[8/16] [0m[38;2;232;230;225mReal-Fruit-Snacks/agent-toolkit[0m
+[38;2;138;143;153m   public   1.1 MB    last push 2026-11-05 (0 days ago)[0m
+[38;2;232;230;225m   Pinned installers and config for my coding setup[0m
+[38;2;138;143;153m   https://github.com/Real-Fruit-Snacks/agent-toolkit[0m
+[38;2;232;230;225m[0m
+[38;2;255;194;71m   [D] delete   [A] archive   [K] keep   [O] open in browser   [Q] quit  [0mk
+[38;2;232;230;225m[0m
+[38;2;138;143;153m----------------------------------------------------------------------[0m
+[38;2;255;106;61m[9/16] [0m[38;2;232;230;225mReal-Fruit-Snacks/carify[0m
+[38;2;138;143;153m   public   1.1 MB    last push 2026-11-05 (0 days ago)[0m
+[38;2;232;230;225m   Convert video for Uconnect USB playback, via ffmpeg[0m
+[38;2;138;143;153m   https://github.com/Real-Fruit-Snacks/carify[0m
+[38;2;232;230;225m[0m
+[38;2;255;194;71m   [D] delete   [A] archive   [K] keep   [O] open in browser   [Q] quit  [0mk
+[38;2;232;230;225m[0m
+[38;2;138;143;153m----------------------------------------------------------------------[0m
+[38;2;255;106;61m[10/16] [0m[38;2;232;230;225mReal-Fruit-Snacks/powershell-toolbox[0m
+[38;2;138;143;153m   public   1.1 MB    last push 2026-11-05 (0 days ago)[0m
+[38;2;232;230;225m   A grab-bag of my PowerShell scripts, each one standalone[0m
+[38;2;138;143;153m   https://github.com/Real-Fruit-Snacks/powershell-toolbox[0m
+[38;2;232;230;225m[0m
+[38;2;255;194;71m   [D] delete   [A] archive   [K] keep   [O] open in browser   [Q] quit  [0mk
+[38;2;232;230;225m[0m
+[38;2;138;143;153m----------------------------------------------------------------------[0m
+[38;2;255;106;61m[11/16] [0m[38;2;232;230;225mReal-Fruit-Snacks/forge-framework[0m
+[38;2;138;143;153m   public   1.0 MB    last push 2026-08-06 (90 days ago)[0m
+[38;2;232;230;225m   Modular offensive-security framework with a Metasploit-style console - 60+ modules covering Active Directory, AD CS, Kerberos, SMB and web attacks, a persistent evidence workspace, and self-contained Docker labs (Samba AD DC, Windows Server 2022, Windows 11, Enterprise CA) that every module is integration-tested against.[0m
+[38;2;138;143;153m   https://github.com/Real-Fruit-Snacks/forge-framework[0m
+[38;2;232;230;225m[0m
+[38;2;255;194;71m   [D] delete   [A] archive   [K] keep   [O] open in browser   [Q] quit  [0mk
+[38;2;232;230;225m[0m
+[38;2;138;143;153m----------------------------------------------------------------------[0m
+[38;2;255;106;61m[12/16] [0m[38;2;232;230;225mReal-Fruit-Snacks/port-sync[0m
+[38;2;138;143;153m   public   1013 KB   last push 2026-11-05 (0 days ago)[0m
+[38;2;232;230;225m   Keeps qBittorrent's port synced to Proton VPN[0m
+[38;2;138;143;153m   https://github.com/Real-Fruit-Snacks/port-sync[0m
+[38;2;232;230;225m[0m
+[38;2;255;194;71m   [D] delete   [A] archive   [K] keep   [O] open in browser   [Q] quit  [0mk
+[38;2;232;230;225m[0m
+[38;2;138;143;153m----------------------------------------------------------------------[0m
+[38;2;255;106;61m[13/16] [0m[38;2;232;230;225mReal-Fruit-Snacks/killer-skills[0m
+[38;2;138;143;153m   public   900 KB    last push 2026-11-05 (0 days ago)[0m
+[38;2;232;230;225m   Claude Code skills for sites, repo pages and review councils[0m
+[38;2;138;143;153m   https://github.com/Real-Fruit-Snacks/killer-skills[0m
+[38;2;232;230;225m[0m
+[38;2;255;194;71m   [D] delete   [A] archive   [K] keep   [O] open in browser   [Q] quit  [0mk
+[38;2;232;230;225m[0m
+[38;2;138;143;153m----------------------------------------------------------------------[0m
+[38;2;255;106;61m[14/16] [0m[38;2;232;230;225mReal-Fruit-Snacks/Real-Fruit-Snacks.github.io[0m
+[38;2;138;143;153m   public   475 KB    last push 2026-11-05 (0 days ago)[0m
+[38;2;232;230;225m   Real tools. No filler.[0m
+[38;2;138;143;153m   https://github.com/Real-Fruit-Snacks/Real-Fruit-Snacks.github.io[0m
+[38;2;232;230;225m[0m
+[38;2;255;194;71m   [D] delete   [A] archive   [K] keep   [O] open in browser   [Q] quit  [0mk
+[38;2;232;230;225m[0m
+[38;2;138;143;153m----------------------------------------------------------------------[0m
+[38;2;255;106;61m[15/16] [0m[38;2;232;230;225mReal-Fruit-Snacks/rfs.tools[0m
+[38;2;138;143;153m   public   342 KB    last push 2026-11-04 (0 days ago)[0m
+[38;2;232;230;225m   The front door at rfs.tools, one page pointing at GitHub[0m
+[38;2;138;143;153m   https://github.com/Real-Fruit-Snacks/rfs.tools[0m
+[38;2;232;230;225m[0m
+[38;2;255;194;71m   [D] delete   [A] archive   [K] keep   [O] open in browser   [Q] quit  [0mk
+[38;2;232;230;225m[0m
+[38;2;138;143;153m----------------------------------------------------------------------[0m
+[38;2;255;106;61m[16/16] [0m[38;2;232;230;225mReal-Fruit-Snacks/Real-Fruit-Snacks[0m
+[38;2;138;143;153m   public   2 KB      last push 2026-11-05 (0 days ago)[0m
+[38;2;232;230;225m   Profile README[0m
+[38;2;138;143;153m   https://github.com/Real-Fruit-Snacks/Real-Fruit-Snacks[0m
+[38;2;232;230;225m[0m
+[38;2;255;194;71m   [D] delete   [A] archive   [K] keep   [O] open in browser   [Q] quit  [0mk
+[38;2;232;230;225m[0m
+[38;2;138;143;153m----------------------------------------------------------------------[0m
+[38;2;232;230;225mDone. Deleted: 0  Archived: 0  Kept: 16  Failed: 0[0m
+[38;2;138;143;153mLog: C:\Users\you\Projects\repo-review-20261105-053736.log[0m

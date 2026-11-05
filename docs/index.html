@@ -3,175 +3,359 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>powershell-toolbox — a grab-bag of PowerShell scripts, each one standalone</title>
-<meta name="description" content="Standalone PowerShell scripts. The current set lists, digests and reviews your GitHub repos through the GitHub CLI. Windows PowerShell 5.1 and PowerShell 7.">
+<title>powershell-toolbox: a grab-bag of PowerShell scripts, each one standalone</title>
+<meta name="description" content="Standalone PowerShell scripts. The current three list, digest and review your GitHub repos through the GitHub CLI, on Windows PowerShell 5.1 and PowerShell 7. Watch each one's real run, or step through a -WhatIf review yourself.">
 <link rel="canonical" href="https://real-fruit-snacks.github.io/powershell-toolbox/">
 <meta property="og:title" content="powershell-toolbox">
 <meta property="og:description" content="A grab-bag of my PowerShell scripts, each one standalone">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://real-fruit-snacks.github.io/powershell-toolbox/">
-<meta property="og:image" content="https://real-fruit-snacks.github.io/powershell-toolbox/assets/cover-dark.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="560">
-<meta property="og:image:alt" content="Invoke-RepoReview.ps1 in a PowerShell window: repo 3 of 14 shown with its size and last push, archived with A, then the next repo">
+<meta property="og:image" content="https://real-fruit-snacks.github.io/powershell-toolbox/assets/social.png">
+<meta property="og:image:width" content="1280">
+<meta property="og:image:height" content="640">
+<meta property="og:image:alt" content="powershell-toolbox: Get-RepoList, Get-RepoDigest and Invoke-RepoReview, each name hung on its hyphen">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
-<link rel="icon" href="assets/favicon.ico" sizes="48x48">
-<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="icon" href="favicon.ico" sizes="32x32">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#0C0D10">
 <script>
-  // Theme before first paint: a saved choice wins, otherwise follow the OS.
-  (function () {
-    try {
-      var t = localStorage.getItem('rfs-theme');
-      if (t === 'nightshift' || t === 'dayshift') document.documentElement.setAttribute('data-theme', t);
-    } catch (e) {}
-  })();
+  // A saved theme wins over the system setting. The key is shared with the other RFS pages.
+  document.documentElement.className = 'js';
+  try { var t = localStorage.getItem('rfs-theme'); if (t === 'nightshift' || t === 'dayshift') document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
-<link rel="preload" href="assets/fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="assets/fonts/ibm-plex-mono-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/rfs.css">
-<link rel="stylesheet" href="assets/site.css">
+<link rel="preload" href="fonts/chivo-latin-wght.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/chivo-mono-latin-wght.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
+<a class="skip" href="#install">Skip to the install lines</a>
 
-<header class="site">
+<header class="top">
   <div class="wrap">
-    <a class="brand" href="https://real-fruit-snacks.github.io/" aria-label="RFS home">
-      <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Real-Fruit-Snacks/rfs-brand/main/assets/rfs-lockup-dark.svg">
-        <img alt="RFS" src="https://raw.githubusercontent.com/Real-Fruit-Snacks/rfs-brand/main/assets/rfs-lockup-light.svg" data-lockup>
-      </picture>
-      <span class="sep" aria-hidden="true"></span>
-      <span class="name">powershell-toolbox</span>
-    </a>
-    <nav>
-      <a href="#install">Install</a>
+    <a class="name" href="./" aria-label="powershell-toolbox, top of the page">powershell<span class="hy">-</span>toolbox</a>
+    <nav aria-label="Page">
       <a href="#scripts">Scripts</a>
-      <a href="#config">Configuration</a>
-      <a class="keep" href="https://github.com/Real-Fruit-Snacks/powershell-toolbox">GitHub</a>
-      <button class="toggle" type="button" id="theme" aria-label="Switch between Nightshift and Dayshift"><span class="night">Nightshift</span><span class="day">Dayshift</span></button>
+      <a href="#install">Get them</a>
+      <a href="#safety">Safety</a>
+      <a href="#config">Settings</a>
+      <a href="https://github.com/Real-Fruit-Snacks/powershell-toolbox">GitHub</a>
     </nav>
+    <button class="theme" type="button" id="theme"><span class="sr-only">Theme: </span><span class="t-night">Nightshift</span><span class="t-day">Dayshift</span></button>
   </div>
 </header>
 
-<div class="hero">
-  <div class="grid-bg" aria-hidden="true"></div>
-  <div class="glow" aria-hidden="true"></div>
-  <div class="wrap">
-    <div>
-      <p class="label">Windows PowerShell 5.1 · PowerShell 7 · GitHub CLI</p>
-      <h1 class="long">powershell-toolbox</h1>
-      <p class="lead">A grab-bag of my PowerShell scripts, each one standalone</p>
-      <p class="sub">The PowerShell scripts I keep, whatever they happen to be for. Copy one out and it still runs. They assume your projects live in <code>C:\Users\&lt;you&gt;\Projects</code>, and every file they write goes there.</p>
+<main>
+<section class="hero" aria-labelledby="title">
+  <div class="wrap hero-grid">
+    <div class="intro">
+      <h1 id="title">A grab-bag of my PowerShell scripts, each one standalone</h1>
+      <p class="sub">Copy one out and it still runs. The three in it now tidy up a GitHub account through the <code>gh</code> CLI: list every repo, put them all in one file for an LLM, then go through them one at a time.</p>
+    </div>
 
-      <div class="install" id="install">
-        <div class="tabs" role="tablist">
-          <button role="tab" aria-selected="true" data-pane="clone">Clone</button>
-          <button role="tab" aria-selected="false" data-pane="gh">GitHub CLI</button>
+    <div class="index" role="tablist" aria-label="The scripts" aria-orientation="vertical">
+      <button class="row" type="button" role="tab" id="tab-list" aria-controls="run-list" aria-selected="false" data-run="list" style="--i:0">
+        <span class="nm"><span class="verb">Get</span><span class="hy" aria-hidden="true"></span><span class="noun"><span class="sr-only">-</span>RepoList<span class="ext">.ps1</span></span></span>
+        <span class="syn"><!-- run:syn-Get-RepoList -->Lists every GitHub repo for an owner with its description and status flags.<!-- /run:syn-Get-RepoList --></span>
+      </button>
+      <button class="row" type="button" role="tab" id="tab-digest" aria-controls="run-digest" aria-selected="false" data-run="digest" style="--i:1">
+        <span class="nm"><span class="verb">Get</span><span class="hy" aria-hidden="true"></span><span class="noun"><span class="sr-only">-</span>RepoDigest<span class="ext">.ps1</span></span></span>
+        <span class="syn"><!-- run:syn-Get-RepoDigest -->Builds one Markdown digest of your repos, GitHub and/or local, READMEs included.<!-- /run:syn-Get-RepoDigest --></span>
+      </button>
+      <button class="row" type="button" role="tab" id="tab-review" aria-controls="run-review" aria-selected="true" data-run="review" style="--i:2">
+        <span class="nm"><span class="verb">Invoke</span><span class="hy" aria-hidden="true"></span><span class="noun"><span class="sr-only">-</span>RepoReview<span class="ext">.ps1</span></span></span>
+        <span class="syn"><!-- run:syn-Invoke-RepoReview -->Walks through your GitHub repos one at a time: delete, archive or keep each.<!-- /run:syn-Invoke-RepoReview --></span>
+      </button>
+    </div>
+
+    <div class="console" id="console">
+      <div class="panel" role="tabpanel" id="run-list" aria-labelledby="tab-list" data-run="list">
+        <p class="cap">Real output, recorded <!-- run:date -->2026-11-05<!-- /run:date --> against my GitHub account. Private repos are left out.</p>
+        <pre class="screen" tabindex="0"><!-- run:list --><span class="ps">PS&gt;</span> <span class="typed">.\Get-RepoList.ps1</span>
+Name                        Status           Language   Pushed     Description
+----                        ------           --------   ------     -----------
+agent-toolkit               public           PowerShell 2026-11-05 Pinned installers and config for my coding setup
+amazon-order-sync           public           JavaScript 2026-11-05 Syncs your Amazon orders into local Markdown notes
+carify                      public           Shell      2026-11-05 Convert video for Uconnect USB playback, via ffmpeg
+certapi                     public           C#         2026-11-05 mTLS API client for the Windows certificate store
+forge-framework             public           Python     2026-08-06 Modular offensive-security framework with a Metasploit-style console - 60+ modules covering Active Directory, AD CS, Kerberos, SMB and web attacks, a persistent evidence workspace, and self-contained Docker labs (Samba AD DC, Windows Server 2022, Windows 11, Enterprise CA) that every module is integration-tested against.
+identity-gen                public           HTML       2026-11-05 Offline generator for throwaway signup identities
+killer-skills               public           JavaScript 2026-11-05 Claude Code skills for sites, repo pages and review councils
+Kraken                      public, archived Rust       2026-06-20 OPSEC-first Rust C2 framework with minimal core and runtime modules
+Lure                        public, archived Python     2026-06-20 SMB hash bait for authorized red team engagements - drops poisoned .url/.scf/.xml payloads onto writable shares to coerce NTLM authentication via Responder
+Maelstrom                   public, archived Python     2026-06-20 NetExec wrapper combining 35+ AD enumeration modules into a single command
+open-file                   public           TypeScript 2026-11-05 Learn and play chess in your browser, offline
+port-sync                   public           PowerShell 2026-11-05 Keeps qBittorrent's port synced to Proton VPN
+powershell-toolbox          public           PowerShell 2026-11-05 A grab-bag of my PowerShell scripts, each one standalone
+proxflow                    public           TypeScript 2026-11-05 Proxmox map and lab builder that works offline
+Rapids                      public, archived Python     2026-06-20 Modular credential spraying framework for authorized security testing
+Real-Fruit-Snacks           public           Python     2026-11-05 Profile README
+Real-Fruit-Snacks.github.io public           HTML       2026-11-05 Real tools. No filler.
+rfs.tools                   public           HTML       2026-11-04 The front door at rfs.tools, one page pointing at GitHub
+rfs-brand                   public           Python     2026-11-05 RFS brand, profile art and repo templates
+screen-mark                 public           Rust       2026-11-05 Screenshot capture and annotation in pure Rust
+Undertow                    public, archived Go         2026-06-20 Statically-linked SSH server for penetration testing - reverse/bind shells, SFTP, port forwarding, TLS wrapping with SNI spoofing, single static binary under 1.5MB. Written in Go.<!-- /run:list --></pre>
+      </div>
+      <div class="panel" role="tabpanel" id="run-digest" aria-labelledby="tab-digest" data-run="digest">
+        <p class="cap">Real run, recorded <!-- run:date -->2026-11-05<!-- /run:date --> and sped up here: 16 repos took 17.5&nbsp;s.</p>
+        <pre class="screen" tabindex="0"><!-- run:digest --><span class="ps">PS&gt;</span> <span class="typed">.\Get-RepoDigest.ps1 -GitHub</span>
+<span class="i-mute">Listing GitHub repos</span>
+<span class="i-mute">  [1/16] Real-Fruit-Snacks/amazon-order-sync</span>
+<span class="i-mute">  [2/16] Real-Fruit-Snacks/certapi</span>
+<span class="i-mute">  [3/16] Real-Fruit-Snacks/agent-toolkit</span>
+<span class="i-mute">  [4/16] Real-Fruit-Snacks/carify</span>
+<span class="i-mute">  [5/16] Real-Fruit-Snacks/Real-Fruit-Snacks</span>
+<span class="i-mute">  [6/16] Real-Fruit-Snacks/Real-Fruit-Snacks.github.io</span>
+<span class="i-mute">  [7/16] Real-Fruit-Snacks/identity-gen</span>
+<span class="i-mute">  [8/16] Real-Fruit-Snacks/killer-skills</span>
+<span class="i-mute">  [9/16] Real-Fruit-Snacks/proxflow</span>
+<span class="i-mute">  [10/16] Real-Fruit-Snacks/port-sync</span>
+<span class="i-mute">  [11/16] Real-Fruit-Snacks/screen-mark</span>
+<span class="i-mute">  [12/16] Real-Fruit-Snacks/open-file</span>
+<span class="i-mute">  [13/16] Real-Fruit-Snacks/powershell-toolbox</span>
+<span class="i-mute">  [14/16] Real-Fruit-Snacks/rfs-brand</span>
+<span class="i-mute">  [15/16] Real-Fruit-Snacks/rfs.tools</span>
+<span class="i-mute">  [16/16] Real-Fruit-Snacks/forge-framework</span>
+
+<span class="i-mint">Wrote C:\Users\you\Projects\repos-digest.md (105 KB)</span>
+
+<span class="ps">PS&gt;</span> <span class="typed">Get-Content $HOME\Projects\repos-digest.md | Select-Object -Skip 4 -First 10</span>
+## GitHub repos (16)
+
+| Repo | Lang | Private | Last push | Description |
+|---|---|---|---|---|
+| Real-Fruit-Snacks/amazon-order-sync | JavaScript | False | 2026-11-05 | Syncs your Amazon orders into local Markdown notes |
+| Real-Fruit-Snacks/certapi | C# | False | 2026-11-05 | mTLS API client for the Windows certificate store |
+| Real-Fruit-Snacks/agent-toolkit | PowerShell | False | 2026-11-05 | Pinned installers and config for my coding setup |
+| Real-Fruit-Snacks/carify | Shell | False | 2026-11-05 | Convert video for Uconnect USB playback, via ffmpeg |
+| Real-Fruit-Snacks/Real-Fruit-Snacks | Python | False | 2026-11-05 | Profile README |
+| Real-Fruit-Snacks/Real-Fruit-Snacks.github.io | HTML | False | 2026-11-05 | Real tools. No filler. |<!-- /run:digest --></pre>
+      </div>
+      <div class="panel on" role="tabpanel" id="run-review" aria-labelledby="tab-review" data-run="review">
+        <p class="cap">A real <code>-WhatIf</code> run against my public repos, recorded <!-- run:date -->2026-11-05<!-- /run:date -->. <span class="js-only">The keys replay it; nothing here reaches GitHub.</span></p>
+        <pre class="screen" tabindex="0" role="log" aria-label="Invoke-RepoReview output"><!-- run:review --><span class="ps">PS&gt;</span> <span class="typed">.\Invoke-RepoReview.ps1 -SortBy size -WhatIf</span>
+<span class="i-mute">Fetching repos</span>
+
+Reviewing 16 repos, sorted by size. Dry run: nothing will change.
+<span class="i-mute">Log: C:\Users\you\Projects\repo-review-20261105-053734.log</span>
+
+<span class="i-mute">----------------------------------------------------------------------</span>
+<span class="i-ember">[1/16] </span>Real-Fruit-Snacks/open-file
+<span class="i-mute">   public   26.6 MB   last push 2026-11-05 (0 days ago)</span>
+   Learn and play chess in your browser, offline
+<span class="i-mute">   https://github.com/Real-Fruit-Snacks/open-file</span>
+
+<span class="i-amber">   [D] delete   [A] archive   [K] keep   [O] open in browser   [Q] quit  </span>k
+
+<span class="i-mute">----------------------------------------------------------------------</span>
+<span class="i-ember">[2/16] </span>Real-Fruit-Snacks/certapi
+<span class="i-mute">   public   7.0 MB    last push 2026-11-05 (0 days ago)</span>
+   mTLS API client for the Windows certificate store
+<span class="i-mute">   https://github.com/Real-Fruit-Snacks/certapi</span>
+
+<span class="i-amber">   [D] delete   [A] archive   [K] keep   [O] open in browser   [Q] quit  </span>a
+What if: Performing the operation "Archive repository" on target "Real-Fruit-Snacks/certapi".
+
+<span class="i-mute">----------------------------------------------------------------------</span>
+<span class="i-ember">[3/16] </span>Real-Fruit-Snacks/rfs-brand
+<span class="i-mute">   public   3.2 MB    last push 2026-11-05 (0 days ago)</span>
+   RFS brand, profile art and repo templates
+<span class="i-mute">   https://github.com/Real-Fruit-Snacks/rfs-brand</span>
+
+<span class="i-amber">   [D] delete   [A] archive   [K] keep   [O] open in browser   [Q] quit  </span>q
+
+Stopped. Deleted: 0  Archived: 0  Kept: 1  Failed: 0  Remaining: 14
+<span class="i-mute">Log: C:\Users\you\Projects\repo-review-20261105-053734.log</span><!-- /run:review --></pre>
+        <div class="keys" aria-label="Answer the prompt">
+          <button type="button" data-key="d"><kbd>D</kbd> delete</button>
+          <button type="button" data-key="a"><kbd>A</kbd> archive</button>
+          <button type="button" data-key="k"><kbd>K</kbd> keep</button>
+          <button type="button" data-key="o"><kbd>O</kbd> open</button>
+          <button type="button" data-key="q"><kbd>Q</kbd> quit</button>
         </div>
-        <div class="pane" data-active data-id="clone"><pre><code>cd $HOME\Projects; git clone https://github.com/Real-Fruit-Snacks/powershell-toolbox; cd powershell-toolbox</code></pre><button class="copy" data-copy="cd $HOME\Projects; git clone https://github.com/Real-Fruit-Snacks/powershell-toolbox; cd powershell-toolbox">Copy</button></div>
-        <div class="pane" data-id="gh"><pre><code>winget install GitHub.cli; gh auth login</code></pre><button class="copy" data-copy="winget install GitHub.cli; gh auth login">Copy</button></div>
-        <div class="foot">The current scripts wrap the <a href="https://cli.github.com/">GitHub CLI</a>, so they see whatever your <code>gh</code> login sees, private repos included.</div>
+        <form class="confirm" hidden>
+          <label for="confirm-name">Type the repo name to confirm. Case counts.</label>
+          <span class="confirm-row"><input id="confirm-name" autocomplete="off" autocapitalize="off" spellcheck="false"><button type="submit">Enter</button></span>
+        </form>
+      </div>
+      <p class="again"><button type="button" id="replay">Run it again</button></p>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="install" aria-labelledby="install-h">
+  <div class="wrap hang">
+    <h2 id="install-h" class="label">Get them</h2>
+    <div class="body">
+      <div class="get">
+        <h3>All of them</h3>
+        <div class="cmd"><code>cd $HOME\Projects; git clone https://github.com/Real-Fruit-Snacks/powershell-toolbox; cd powershell-toolbox</code><button class="copy" type="button" data-copy="cd $HOME\Projects; git clone https://github.com/Real-Fruit-Snacks/powershell-toolbox; cd powershell-toolbox">Copy</button></div>
+        <p>They assume your projects live in <code>C:\Users\&lt;you&gt;\Projects</code>, and every file they write goes there. <code>Get-Help .\&lt;script&gt;.ps1 -Full</code> lists every parameter.</p>
+      </div>
+      <div class="get">
+        <h3>Just one</h3>
+        <div class="cmd"><code id="one">iwr https://raw.githubusercontent.com/Real-Fruit-Snacks/powershell-toolbox/main/Invoke-RepoReview.ps1 -OutFile Invoke-RepoReview.ps1</code><button class="copy" type="button" id="one-copy" data-copy="iwr https://raw.githubusercontent.com/Real-Fruit-Snacks/powershell-toolbox/main/Invoke-RepoReview.ps1 -OutFile Invoke-RepoReview.ps1">Copy</button></div>
+        <p>Each script carries everything it needs, so the one file is enough.<span class="js-only"> This line follows the script picked above.</span></p>
+      </div>
+      <div class="get">
+        <h3>They need gh</h3>
+        <div class="cmd"><code>winget install GitHub.cli; gh auth login</code><button class="copy" type="button" data-copy="winget install GitHub.cli; gh auth login">Copy</button></div>
+        <p>They wrap the <a href="https://cli.github.com/">GitHub CLI</a>, so they see whatever your <code>gh</code> login sees, private repos included. If the execution policy blocks a script: <code>powershell -ExecutionPolicy Bypass -File .\Get-RepoList.ps1</code></p>
       </div>
     </div>
-    <div class="term" aria-label="Example: Invoke-RepoReview.ps1 archiving a repo">
-      <div class="bar"><i></i><i></i><i></i><span>pwsh</span></div>
-<pre><code><span class="p">PS&gt;</span> .\Invoke-RepoReview.ps1 -SortBy size
-Reviewing 14 repos, sorted by size.
-<span class="c">----------------------------------------------</span>
-<span class="p">[3/14]</span> Real-Fruit-Snacks/scratch-2024
-   <span class="c">private  48.2 MB   last push 2024-03-11</span>
-   Experiments, never finished
-   <span class="a">[D] delete [A] archive [K] keep [O] open in browser [Q] quit</span>
-<span class="a">A</span>
-   <span class="s">Archived.</span> Read-only now; unarchive from the
-   repo settings.
-<span class="c">----------------------------------------------</span>
-<span class="p">[4/14]</span> Real-Fruit-Snacks/old-dotfiles</code></pre>
-    </div>
   </div>
-</div>
+</section>
 
-<section id="scripts">
+<section class="sec" id="scripts" aria-labelledby="scripts-h">
   <div class="wrap">
-    <p class="label">Scripts</p>
-    <h2>The current set: your GitHub repos</h2>
-    <p class="mute" style="max-width:70ch">I had a lot of repos, some dead, and no quick way to see them all at once. <code>Get-Help .\&lt;script&gt;.ps1 -Full</code> lists every parameter.</p>
-    <div class="cards" style="margin-top:22px">
-      <div class="card"><h3>Get-RepoList.ps1</h3><p>Lists every repo for an owner with its visibility and flags (archived, fork, template, empty), as a table, objects, CSV, JSON or Markdown.</p></div>
-      <div class="card"><h3>Get-RepoDigest.ps1</h3><p>Writes one Markdown file of repo metadata and READMEs, from GitHub and/or your projects folder (<code>-Local</code>), to upload to an LLM.</p></div>
-      <div class="card"><h3>Invoke-RepoReview.ps1</h3><p>Steps through repos one by one: delete, archive, keep or open in the browser. Logs every decision. Asks you to type the name before a delete; <code>-WhatIf</code> changes nothing.</p></div>
-    </div>
-    <pre style="margin-top:22px"><code>.\Get-RepoList.ps1 -Owner Real-Fruit-Snacks -Format Markdown -OutFile repos.md   <span class="c"># -&gt; Projects\repos.md</span>
-.\Get-RepoDigest.ps1 -GitHub -Local                                              <span class="c"># -&gt; Projects\repos-digest.md</span>
-.\Invoke-RepoReview.ps1 -SortBy size -WhatIf                                     <span class="c"># log -&gt; Projects\repo-review-&lt;time&gt;.log</span>
+    <h2 id="scripts-h" class="sr-only">The scripts, as Get-Help shows them</h2>
 
-<span class="c"># if the execution policy blocks a script</span>
-powershell -ExecutionPolicy Bypass -File .\Get-RepoList.ps1</code></pre>
+    <article class="ref hang" id="ref-Get-RepoList" aria-labelledby="ref-list-h">
+      <h3 class="ref-name" id="ref-list-h"><span class="verb">Get</span><span class="hy" aria-hidden="true"></span><span class="noun"><span class="sr-only">-</span>RepoList<span class="ext">.ps1</span></span></h3>
+      <p class="label">Description</p>
+      <div class="body"><p>Pulls the repo list through the gh CLI, so private repos are included when your token can see them. Emits one row per repo: Name, Description, Visibility, Archived, Fork, Template, Empty, Language, Pushed, Stars, Url. Writes a table, objects on the pipeline, CSV, JSON, or a Markdown table. For an org's private repos the token also needs the <code>read:org</code> scope.</p></div>
+      <p class="label">Syntax</p>
+      <div class="body"><pre class="syntax">.\Get-RepoList.ps1 [[-Owner] &lt;String&gt;] [[-Format] &lt;String&gt;] [[-OutFile] &lt;String&gt;] [[-Limit] &lt;Int32&gt;] [-ExcludeForks] [&lt;CommonParameters&gt;]</pre></div>
+      <p class="label">Parameters</p>
+      <div class="body">
+        <table class="ft">
+          <thead><tr><th scope="col" data-dash="---------">Parameter</th><th scope="col" data-dash="------">Effect</th></tr></thead>
+          <tbody>
+            <tr data-param="Owner"><th scope="row"><code>-Owner</code></th><td>GitHub user or org. Defaults to the account gh is logged in as.</td></tr>
+            <tr data-param="Format"><th scope="row"><code>-Format</code></th><td>Table (default), Object, Csv, Json or Markdown.</td></tr>
+            <tr data-param="OutFile"><th scope="row"><code>-OutFile</code></th><td>Write the output to a file instead of the console. A relative path goes in your projects folder; an absolute path is used as given. Table output is written as plain text, Object output as Clixml.</td></tr>
+            <tr data-param="Limit"><th scope="row"><code>-Limit</code></th><td>Max repos to fetch. Default 1000.</td></tr>
+            <tr data-param="ExcludeForks"><th scope="row"><code>-ExcludeForks</code></th><td>Leave forks out. They are listed by default.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="label">Examples</p>
+      <div class="body"><pre class="ex"><code>.\Get-RepoList.ps1 -Owner Real-Fruit-Snacks -Format Markdown -OutFile repos.md   <span class="i-mute"># Projects\repos.md</span>
+.\Get-RepoList.ps1 -Format Object | Where-Object Archived | Select-Object Name, Pushed
+.\Get-RepoList.ps1 -Format Csv -OutFile repos.csv -ExcludeForks</code></pre></div>
+    </article>
+
+    <article class="ref hang" id="ref-Get-RepoDigest" aria-labelledby="ref-digest-h">
+      <h3 class="ref-name" id="ref-digest-h"><span class="verb">Get</span><span class="hy" aria-hidden="true"></span><span class="noun"><span class="sr-only">-</span>RepoDigest<span class="ext">.ps1</span></span></h3>
+      <p class="label">Description</p>
+      <div class="body"><p>Made for handing a whole set of repos to an LLM as a single upload. For GitHub repos (through the gh CLI) it writes a summary table, then per repo the metadata, topics, top-level file list and README. For local folders it treats every top-level directory under each root as a project and records git info (remote, branch, commit count, uncommitted files), manifests, a file-type count and the README.</p></div>
+      <p class="label">Syntax</p>
+      <div class="body"><pre class="syntax">.\Get-RepoDigest.ps1 [-GitHub] [[-Owner] &lt;String&gt;] [-Local] [[-LocalRoot] &lt;String[]&gt;] [[-OutFile] &lt;String&gt;] [[-MaxReadmeChars] &lt;Int32&gt;] [-IncludeArchived] [-IncludeForks] [&lt;CommonParameters&gt;]</pre></div>
+      <p class="label">Parameters</p>
+      <div class="body">
+        <table class="ft">
+          <thead><tr><th scope="col" data-dash="---------">Parameter</th><th scope="col" data-dash="------">Effect</th></tr></thead>
+          <tbody>
+            <tr data-param="GitHub"><th scope="row"><code>-GitHub</code></th><td>Include GitHub repos. Needs gh, logged in with <code>gh auth login</code>.</td></tr>
+            <tr data-param="Owner"><th scope="row"><code>-Owner</code></th><td>GitHub user or org for <code>-GitHub</code>. Defaults to the account gh is logged in as.</td></tr>
+            <tr data-param="Local"><th scope="row"><code>-Local</code></th><td>Include every folder in your projects folder (default <code>C:\Users\&lt;you&gt;\Projects</code>).</td></tr>
+            <tr data-param="LocalRoot"><th scope="row"><code>-LocalRoot</code></th><td>Other folders whose top-level subfolders are treated as projects. Combines with <code>-Local</code>.</td></tr>
+            <tr data-param="OutFile"><th scope="row"><code>-OutFile</code></th><td>Where to write the digest. Default: <code>repos-digest.md</code> in your projects folder. A relative path goes in the projects folder; an absolute path is used as given.</td></tr>
+            <tr data-param="MaxReadmeChars"><th scope="row"><code>-MaxReadmeChars</code></th><td>Cut each README after this many characters. Default 8000.</td></tr>
+            <tr data-param="IncludeArchived"><th scope="row"><code>-IncludeArchived</code></th><td>Include archived GitHub repos. Skipped by default.</td></tr>
+            <tr data-param="IncludeForks"><th scope="row"><code>-IncludeForks</code></th><td>Include forked GitHub repos. Skipped by default.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="label">Examples</p>
+      <div class="body"><pre class="ex"><code>.\Get-RepoDigest.ps1 -GitHub            <span class="i-mute"># your GitHub repos only</span>
+.\Get-RepoDigest.ps1 -GitHub -Local     <span class="i-mute"># and every folder in Projects, in one file</span>
+.\Get-RepoDigest.ps1 -GitHub -Owner Real-Fruit-Snacks -Local -OutFile all.md -MaxReadmeChars 12000</code></pre></div>
+    </article>
+
+    <article class="ref hang" id="ref-Invoke-RepoReview" aria-labelledby="ref-review-h">
+      <h3 class="ref-name" id="ref-review-h"><span class="verb">Invoke</span><span class="hy" aria-hidden="true"></span><span class="noun"><span class="sr-only">-</span>RepoReview<span class="ext">.ps1</span></span></h3>
+      <p class="label">Description</p>
+      <div class="body"><p>Uses the gh CLI. For every repo it shows the name, visibility, size, last push, fork/archived flags and description, then asks <code>[D] delete [A] archive [K] keep [O] open in browser [Q] quit</code>. Delete asks a second time: type the repo name exactly. Every decision is appended to a log file. <code>-WhatIf</code> walks the same list without changing anything.</p></div>
+      <p class="label">Syntax</p>
+      <div class="body"><pre class="syntax">.\Invoke-RepoReview.ps1 [[-Owner] &lt;String&gt;] [[-Limit] &lt;Int32&gt;] [[-SortBy] &lt;String&gt;] [-IncludeForks] [-IncludeArchived] [[-LogPath] &lt;String&gt;] [-WhatIf] [-Confirm] [&lt;CommonParameters&gt;]</pre></div>
+      <p class="label">Parameters</p>
+      <div class="body">
+        <table class="ft">
+          <thead><tr><th scope="col" data-dash="---------">Parameter</th><th scope="col" data-dash="------">Effect</th></tr></thead>
+          <tbody>
+            <tr data-param="Owner"><th scope="row"><code>-Owner</code></th><td>GitHub user or org to list repos for. Defaults to the account gh is logged in as.</td></tr>
+            <tr data-param="Limit"><th scope="row"><code>-Limit</code></th><td>Max repos to fetch. Default 1000.</td></tr>
+            <tr data-param="SortBy"><th scope="row"><code>-SortBy</code></th><td><code>pushed</code> (oldest first, default), <code>name</code>, or <code>size</code> (largest first).</td></tr>
+            <tr data-param="IncludeForks"><th scope="row"><code>-IncludeForks</code></th><td>Include forked repos. Skipped by default.</td></tr>
+            <tr data-param="IncludeArchived"><th scope="row"><code>-IncludeArchived</code></th><td>Include archived repos. Skipped by default.</td></tr>
+            <tr data-param="LogPath"><th scope="row"><code>-LogPath</code></th><td>Where to write the decision log. Default: <code>repo-review-&lt;timestamp&gt;.log</code> in your projects folder. A relative path goes in the projects folder; an absolute path is used as given.</td></tr>
+            <tr data-param="WhatIf"><th scope="row"><code>-WhatIf</code></th><td>Walks the list and logs <code>WHATIF</code> for each archive or delete. Changes nothing.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="label">Examples</p>
+      <div class="body"><pre class="ex"><code>.\Invoke-RepoReview.ps1 -SortBy size -WhatIf     <span class="i-mute"># a dry run, largest first</span>
+.\Invoke-RepoReview.ps1 -Owner my-org -SortBy size
+.\Invoke-RepoReview.ps1 -IncludeForks -IncludeArchived -WhatIf</code></pre></div>
+    </article>
   </div>
 </section>
 
-<section id="rules">
-  <div class="wrap two">
-    <div>
-      <p class="label">House rules</p>
-      <h2>Every script, every time</h2>
-    </div>
-    <ul class="plain">
-      <li>Standalone. A shared block of helpers is copied into each script, and a test keeps the copies identical.</li>
-      <li>Runs on Windows PowerShell 5.1 and PowerShell 7, ASCII only, so 5.1 never misreads a file.</li>
-      <li>Writes only under your projects folder, unless you pass an absolute path.</li>
-      <li>Anything destructive has <code>-WhatIf</code> and asks first.</li>
-    </ul>
-  </div>
-</section>
-
-<section id="config">
-  <div class="wrap two">
-    <div>
-      <p class="label">Configuration</p>
-      <h2>Environment</h2>
-      <p class="mute">To set a different projects folder for good: <code>[Environment]::SetEnvironmentVariable('RFS_PROJECTS', 'D:\code', 'User')</code>, then open a new window.</p>
-    </div>
-    <table>
-      <tr><th>Variable</th><th>Effect</th></tr>
-      <tr><td>RFS_PROJECTS</td><td>Your projects folder. Default <code>$HOME\Projects</code>. Relative <code>-OutFile</code> and <code>-LogPath</code> values land here.</td></tr>
-      <tr><td>RFS_THEME</td><td><code>dayshift</code> for a light terminal; Nightshift is the default</td></tr>
-      <tr><td>NO_COLOR</td><td>Plain text, no colour</td></tr>
-    </table>
-  </div>
-</section>
-
-<section id="tested">
-  <div class="wrap two">
-    <div>
-      <p class="label">Tested on</p>
-      <ul class="plain">
-        <li>Ubuntu 24.04 · PowerShell 7.4.6 · Pester 5.7.1 and 6.2.0, against a stub <code>gh</code></li>
-        <li>Windows Server 2025 · Windows PowerShell 5.1 and PowerShell 7: the same suite in CI on every push</li>
-        <li><em>Not</em> tested: macOS. It should behave like Linux; I haven't checked.</li>
+<section class="sec" id="safety" aria-labelledby="safety-h">
+  <div class="wrap hang">
+    <h2 id="safety-h" class="label">Safety</h2>
+    <div class="body">
+      <p class="lede">Only <code>Invoke-RepoReview.ps1</code> changes anything on GitHub: it archives when you press A, and deletes only after you type the name.</p>
+      <ul class="rules">
+        <li><b>Delete asks again.</b> You type the repo name exactly, and case counts: <code>Open-file</code> is not <code>open-file</code>.</li>
+        <li><b><code>-WhatIf</code> changes nothing.</b> It walks the same list, prints what it would do, and logs <code>WHATIF</code>.</li>
+        <li><b>Every decision is logged</b> to <code>repo-review-&lt;time&gt;.log</code> in your projects folder: <code>KEPT</code>, <code>ARCHIVED</code>, <code>DELETED</code>, <code>FAILED</code>, <code>QUIT</code>.</li>
+        <li><b>Deleting needs the <code>delete_repo</code> scope</b> on your gh token. The script offers to add it: <code>gh auth refresh -h github.com -s delete_repo</code>. Tokens that don't list their scopes, such as fine-grained ones, skip that check.</li>
+        <li><b>There is no undo here.</b> GitHub keeps most deleted repos restorable for 90 days (Settings, Repositories, Deleted repositories). Forks, and repos that were part of a fork network, can't be restored there.</li>
+        <li><b>Nothing goes anywhere but GitHub,</b> through gh. To report a way round any of this, use <a href="https://github.com/Real-Fruit-Snacks/powershell-toolbox/security/advisories/new">private vulnerability reporting</a>.</li>
       </ul>
     </div>
-    <div>
-      <p class="label">Known issues</p>
-      <ul class="plain">
-        <li>Deleting needs the <code>delete_repo</code> scope on your <code>gh</code> token; <code>Invoke-RepoReview.ps1</code> offers to add it.</li>
-        <li>Delete has no undo here. GitHub keeps most deleted repos restorable for 90 days, but not forks.</li>
-        <li><code>Get-RepoDigest.ps1 -GitHub</code> makes two API calls per repo, so a third run within the hour can hit GitHub's rate limit at the 1,000-repo cap.</li>
-        <li>All three fetch at most 1,000 repos by default.</li>
-      </ul>
+  </div>
+</section>
+
+<section class="sec" id="config" aria-labelledby="config-h">
+  <div class="wrap hang">
+    <h2 id="config-h" class="label">Settings</h2>
+    <div class="body">
+      <table class="ft env">
+        <thead><tr><th scope="col" data-dash="--------">Variable</th><th scope="col" data-dash="------">Effect</th></tr></thead>
+        <tbody>
+          <tr><th scope="row"><code>RFS_PROJECTS</code></th><td>Your projects folder. Default <code>$HOME\Projects</code>. Relative <code>-OutFile</code> and <code>-LogPath</code> values land here; absolute paths are used as given.</td></tr>
+          <tr><th scope="row"><code>RFS_THEME</code></th><td><code>dayshift</code> for a light terminal. Nightshift, for dark terminals, is the default.</td></tr>
+          <tr><th scope="row"><code>NO_COLOR</code></th><td>Any value: plain text, no colour at all (<a href="https://no-color.org">no-color.org</a>).</td></tr>
+        </tbody>
+      </table>
+      <p>To set a different projects folder for good: <code>[Environment]::SetEnvironmentVariable('RFS_PROJECTS', 'D:\code', 'User')</code>, then open a new window. In an old <code>conhost</code> window without VT support, output falls back to the nearest of the 16 console colours.</p>
     </div>
   </div>
 </section>
 
-<footer>
+<section class="sec" id="tested" aria-labelledby="tested-h">
+  <div class="wrap hang">
+    <h2 id="tested-h" class="label">Tested on</h2>
+    <div class="body two">
+      <ul class="plain">
+        <li>Windows PowerShell 5.1 and PowerShell 7.6 on Windows Server 2025, and PowerShell 7.6 on Ubuntu 24.04: CI runs the Pester suite on every push, against a stub <code>gh</code>.</li>
+        <li>Windows 11 with Windows PowerShell 5.1 and gh 2.102: the runs on this page, against my real account.</li>
+        <li><i>Not</i> tested: macOS. It should behave like Linux; I haven't checked.</li>
+      </ul>
+      <div>
+        <h3 class="minor">Known issues</h3>
+        <ul class="plain">
+          <li><code>Get-RepoDigest.ps1 -GitHub</code> makes two API calls per repo. At the 1,000-repo cap that is 2,000 of GitHub's 5,000 requests an hour, so a third run within the hour can hit the limit.</li>
+          <li>All three fetch at most 1,000 repos by default (<code>-Limit</code> on two of them; the digest is fixed at 1,000).</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="foot">
   <div class="wrap">
-    <span>MIT · <a href="https://github.com/Real-Fruit-Snacks/powershell-toolbox">Source</a> · <a href="https://github.com/Real-Fruit-Snacks/powershell-toolbox/blob/main/CHANGELOG.md">Changelog</a> · <a href="https://github.com/Real-Fruit-Snacks/powershell-toolbox/blob/main/SECURITY.md">Security</a></span>
-    <span><a href="https://real-fruit-snacks.github.io/">RFS</a> · Real tools. No filler. · <a href="https://github.com/Real-Fruit-Snacks/rfs-brand/blob/main/BRAND.md">Brand</a></span>
+    <p>MIT · <a href="https://github.com/Real-Fruit-Snacks/powershell-toolbox">Source</a> · <a href="https://github.com/Real-Fruit-Snacks/powershell-toolbox/blob/main/CHANGELOG.md">Changelog</a> · <a href="https://github.com/Real-Fruit-Snacks/powershell-toolbox/blob/main/SECURITY.md">Security</a> · <a href="https://real-fruit-snacks.github.io/">RFS</a></p>
+    <p class="colophon">Set in Chivo and Chivo Mono. Every run on this page is generated from a recording by <a href="https://github.com/Real-Fruit-Snacks/powershell-toolbox/tree/main/docs/art">docs/art</a>.</p>
   </div>
 </footer>
 
-<script src="assets/site.js"></script>
+<script src="runs.js"></script>
+<script src="script.js"></script>
 </body>
 </html>

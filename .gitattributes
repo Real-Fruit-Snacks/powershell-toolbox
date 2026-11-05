@@ -5,3 +5,12 @@
 *.yml text eol=lf
 *.json text eol=lf
 *.png binary
+*.woff2 binary
+*.ico binary
+*.svg text eol=lf
+*.html text eol=lf
+*.css text eol=lf
+*.js text eol=lf
+*.py text eol=lf
+*.txt text eol=lf
+*.webmanifest text eol=lf

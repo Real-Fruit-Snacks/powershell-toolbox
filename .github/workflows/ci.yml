@@ -71,3 +71,19 @@ jobs:
           $c.Run.Exit = $true
           $c.Output.Verbosity = 'Detailed'
           Invoke-Pester -Configuration $c
+
+  art:
+    # The README index (docs/assets/index-*.svg), the page's runs.js and the transcripts spliced into
+    # docs/index.html and README.md are generated from docs/art/runs and the scripts' own help.
+    # Fail if what's committed no longer matches docs/art/make-art.py.
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.14'
+      - name: Regenerate
+        run: |
+          python -m pip install --quiet -r docs/art/requirements.txt
+          python docs/art/make-art.py
+          git diff --exit-code -- docs/assets/index-dark.svg docs/assets/index-light.svg docs/runs.js docs/index.html README.md

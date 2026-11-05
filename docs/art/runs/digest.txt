@@ -1,0 +1,32 @@
+<<recorded>>2026-11-05, Windows PowerShell 5.1.26100.9711, gh 2.102.0
+<<cmd>>.\Get-RepoDigest.ps1 -GitHub
+[38;2;138;143;153mListing GitHub repos[0m
+[38;2;138;143;153m  [1/16] Real-Fruit-Snacks/amazon-order-sync[0m
+[38;2;138;143;153m  [2/16] Real-Fruit-Snacks/certapi[0m
+[38;2;138;143;153m  [3/16] Real-Fruit-Snacks/agent-toolkit[0m
+[38;2;138;143;153m  [4/16] Real-Fruit-Snacks/carify[0m
+[38;2;138;143;153m  [5/16] Real-Fruit-Snacks/Real-Fruit-Snacks[0m
+[38;2;138;143;153m  [6/16] Real-Fruit-Snacks/Real-Fruit-Snacks.github.io[0m
+[38;2;138;143;153m  [7/16] Real-Fruit-Snacks/identity-gen[0m
+[38;2;138;143;153m  [8/16] Real-Fruit-Snacks/killer-skills[0m
+[38;2;138;143;153m  [9/16] Real-Fruit-Snacks/proxflow[0m
+[38;2;138;143;153m  [10/16] Real-Fruit-Snacks/port-sync[0m
+[38;2;138;143;153m  [11/16] Real-Fruit-Snacks/screen-mark[0m
+[38;2;138;143;153m  [12/16] Real-Fruit-Snacks/open-file[0m
+[38;2;138;143;153m  [13/16] Real-Fruit-Snacks/powershell-toolbox[0m
+[38;2;138;143;153m  [14/16] Real-Fruit-Snacks/rfs-brand[0m
+[38;2;138;143;153m  [15/16] Real-Fruit-Snacks/rfs.tools[0m
+[38;2;138;143;153m  [16/16] Real-Fruit-Snacks/forge-framework[0m
+[38;2;232;230;225m[0m
+[38;2;61;220;151mWrote C:\Users\you\Projects\repos-digest.md (105 KB)[0m
+<<cmd>>Get-Content $HOME\Projects\repos-digest.md | Select-Object -Skip 4 -First 10
+## GitHub repos (16)
+
+| Repo | Lang | Private | Last push | Description |
+|---|---|---|---|---|
+| Real-Fruit-Snacks/amazon-order-sync | JavaScript | False | 2026-11-05 | Syncs your Amazon orders into local Markdown notes |
+| Real-Fruit-Snacks/certapi | C# | False | 2026-11-05 | mTLS API client for the Windows certificate store |
+| Real-Fruit-Snacks/agent-toolkit | PowerShell | False | 2026-11-05 | Pinned installers and config for my coding setup |
+| Real-Fruit-Snacks/carify | Shell | False | 2026-11-05 | Convert video for Uconnect USB playback, via ffmpeg |
+| Real-Fruit-Snacks/Real-Fruit-Snacks | Python | False | 2026-11-05 | Profile README |
+| Real-Fruit-Snacks/Real-Fruit-Snacks.github.io | HTML | False | 2026-11-05 | Real tools. No filler. |

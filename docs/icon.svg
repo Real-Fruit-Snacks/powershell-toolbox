@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- The index in miniature: three script names, each verb and noun hung on one Ember hyphen. -->
+  <rect width="32" height="32" rx="7" fill="#0C0D10"/>
+  <g fill="#E8E6E1">
+    <rect x="8" y="6" width="4" height="4"/><rect x="16" y="6" width="8" height="4"/>
+    <rect x="8" y="14" width="4" height="4"/><rect x="16" y="14" width="10" height="4"/>
+    <rect x="4" y="22" width="8" height="4"/><rect x="16" y="22" width="12" height="4"/>
+  </g>
+  <g fill="#FF6A3D">
+    <rect x="12" y="6" width="4" height="4"/><rect x="12" y="14" width="4" height="4"/><rect x="12" y="22" width="4" height="4"/>
+  </g>
+</svg>

@@ -1,0 +1,33 @@
+<<recorded>>2026-11-05, Windows PowerShell 5.1.26100.9711, gh 2.102.0
+<<cmd>>.\Invoke-RepoReview.ps1 -SortBy size -WhatIf
+[38;2;138;143;153mFetching repos[0m
+[38;2;232;230;225m[0m
+[38;2;232;230;225mReviewing 16 repos, sorted by size. Dry run: nothing will change.[0m
+[38;2;138;143;153mLog: C:\Users\you\Projects\repo-review-20261105-053743.log[0m
+[38;2;232;230;225m[0m
+[38;2;138;143;153m----------------------------------------------------------------------[0m
+[38;2;255;106;61m[1/16] [0m[38;2;232;230;225mReal-Fruit-Snacks/open-file[0m
+[38;2;138;143;153m   public   26.6 MB   last push 2026-11-05 (0 days ago)[0m
+[38;2;232;230;225m   Learn and play chess in your browser, offline[0m
+[38;2;138;143;153m   https://github.com/Real-Fruit-Snacks/open-file[0m
+[38;2;232;230;225m[0m
+[38;2;255;194;71m   [D] delete   [A] archive   [K] keep   [O] open in browser   [Q] quit  [0mo
+[38;2;255;194;71m   [D] delete   [A] archive   [K] keep   [O] open in browser   [Q] quit  [0mx
+[38;2;138;143;153m   Enter D, A, K, O or Q.[0m
+[38;2;255;194;71m   [D] delete   [A] archive   [K] keep   [O] open in browser   [Q] quit  [0md
+[38;2;255;194;71m   Type 'open-file' to confirm deletion: [0mOpen-file
+[38;2;138;143;153m   Name didn't match. Not deleted.[0m
+[38;2;255;194;71m   [D] delete   [A] archive   [K] keep   [O] open in browser   [Q] quit  [0md
+[38;2;255;194;71m   Type 'open-file' to confirm deletion: [0mopen-file
+What if: Performing the operation "Delete repository" on target "Real-Fruit-Snacks/open-file".
+[38;2;232;230;225m[0m
+[38;2;138;143;153m----------------------------------------------------------------------[0m
+[38;2;255;106;61m[2/16] [0m[38;2;232;230;225mReal-Fruit-Snacks/certapi[0m
+[38;2;138;143;153m   public   7.0 MB    last push 2026-11-05 (0 days ago)[0m
+[38;2;232;230;225m   mTLS API client for the Windows certificate store[0m
+[38;2;138;143;153m   https://github.com/Real-Fruit-Snacks/certapi[0m
+[38;2;232;230;225m[0m
+[38;2;255;194;71m   [D] delete   [A] archive   [K] keep   [O] open in browser   [Q] quit  [0mq
+[38;2;232;230;225m[0m
+[38;2;232;230;225mStopped. Deleted: 0  Archived: 0  Kept: 0  Failed: 0  Remaining: 15[0m
+[38;2;138;143;153mLog: C:\Users\you\Projects\repo-review-20261105-053743.log[0m
