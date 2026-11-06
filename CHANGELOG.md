@@ -1,6 +1,8 @@
 # Changelog
 
-## Unreleased
+## v1.1.0 — 2026-11-05
+
+Each release now has two downloads: a zip of the three scripts, to install without git, and a dev kit to lint, test and work on them on Windows with no network. The scripts take the same parameters and do the same things as in v1.0.1, and still need gh and the network when they run.
 
 ### Added
 
