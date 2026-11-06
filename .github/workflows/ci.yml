@@ -1,8 +1,12 @@
 name: ci
 
+# Branch pushes and pull requests. A version tag runs it through release.yml instead, which calls it
+# before publishing.
 on:
   push:
+    branches: ['**']
   pull_request:
+  workflow_call:
 
 permissions:
   contents: read
@@ -33,11 +37,9 @@ jobs:
           # ("failed to download"), or the gallery was unreachable when PowerShellGet first
           # loaded, so PSGallery is not registered at all ("No repository with the name
           # 'PSGallery' was found"). Each try re-registers the gallery if it is missing, then
-          # installs. 5 tries, 15/30/45/60 s apart, before failing the job.
-          $modules = @(
-            @{ Name = 'Pester'; Version = '5.7.1' },
-            @{ Name = 'PSScriptAnalyzer'; Version = '1.25.0' }
-          )
+          # installs. 5 tries, 15/30/45/60 s apart, before failing the job. The versions are pinned in
+          # tools/versions.psd1, which the dev kit reads too.
+          $modules = (Import-PowerShellDataFile ./tools/versions.psd1).Modules
           foreach ($m in $modules) {
             for ($try = 1; $true; $try++) {
               try {
@@ -65,7 +67,8 @@ jobs:
 
       - name: Test
         run: |
-          Import-Module Pester -RequiredVersion 5.7.1
+          $pester = (Import-PowerShellDataFile ./tools/versions.psd1).Modules | Where-Object Name -eq Pester
+          Import-Module Pester -RequiredVersion $pester.Version
           $c = New-PesterConfiguration
           $c.Run.Path = './tests'
           $c.Run.Exit = $true
@@ -79,9 +82,13 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5
+      - name: Python version
+        id: versions
+        shell: pwsh
+        run: '"python=$((Import-PowerShellDataFile tools/versions.psd1).Python)" >> $env:GITHUB_OUTPUT'
       - uses: actions/setup-python@v6
         with:
-          python-version: '3.14'
+          python-version: ${{ steps.versions.outputs.python }}
       - name: Regenerate
         run: |
           python -m pip install --quiet -r docs/art/requirements.txt

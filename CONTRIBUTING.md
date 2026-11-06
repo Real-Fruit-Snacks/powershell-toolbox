@@ -22,6 +22,29 @@ Invoke-Pester ./tests
 
 CI runs both on Windows PowerShell 5.1, PowerShell 7 on Windows, and PowerShell 7 on Ubuntu. It also reruns `python docs/art/make-art.py` (after `pip install -r docs/art/requirements.txt`) and fails if the README art, `docs/runs.js` or the transcripts in `docs/index.html` and `README.md` change.
 
+## Developing offline
+
+Every release has `powershell-toolbox-<version>-dev-windows-x64.zip`, a dev kit for a Windows x64 machine with no network: the repo at that tag, plus Pester and PSScriptAnalyzer, the Python wheels for the art, their licences, and `offline/setup.ps1`.
+
+```powershell
+Unblock-File .\powershell-toolbox-<version>-dev-windows-x64.zip
+Expand-Archive .\powershell-toolbox-<version>-dev-windows-x64.zip -DestinationPath $HOME\Projects
+cd $HOME\Projects\powershell-toolbox-<version>-dev
+.\offline\setup.ps1
+```
+
+`setup.ps1` loads the bundled modules into that window at the pinned versions, builds a Python venv from the wheels, says what's missing, and prints the lint, test and art commands to run next. It sets up that window only; in a new one, run it again. If scripts are blocked, run `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass` first.
+
+The kit doesn't bundle runtimes or outside tools. `offline/README.md` in it lists each with the exact version CI built and tested the kit with and a link to its offline installer: PowerShell 7 (Windows PowerShell 5.1 comes with Windows), Python 3.14 for the art check, and, optionally, git and gh. The tests don't need gh; they use the stub.
+
+`tools/build-dev-kit.ps1` builds the kit, the offline zip of the scripts and `SHA256SUMS.txt` into `dist/` (`pwsh ./tools/build-dev-kit.ps1`, with the network). `tools/dev-kit/` holds the kit's `setup.ps1` and `README.md`. Pester, PSScriptAnalyzer and the Python version are pinned in `tools/versions.psd1`, which CI reads too, so change them there.
+
+## Releasing
+
+1. Move `## Unreleased` in `CHANGELOG.md` to `## vX.Y.Z — <date>`, with a one-paragraph summary under it. The summary becomes the release notes.
+2. Push, then run the `offline` workflow on main (Actions > offline > Run workflow). It builds the downloads and runs the lint, tests and art check from the unzipped kit with the network cut off, on Windows PowerShell 5.1 and PowerShell 7.
+3. When it and CI are green, tag the commit `vX.Y.Z` and push the tag. `release.yml` checks the changelog, runs CI and the offline checks again, and publishes the release with the downloads.
+
 ## Writing
 
 Plain, specific, no emoji, no exclamation marks. Error messages say what to run next.

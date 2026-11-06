@@ -1,0 +1,70 @@
+name: release
+
+# A version tag (v1.1.0) publishes its release: CHANGELOG.md must have the tag's section on top,
+# CI and the offline checks must pass on the tagged commit, and then the release gets the
+# section's summary as its notes and the downloads offline.yml built and checked.
+on:
+  push:
+    tags: ['v*.*.*']
+
+permissions:
+  contents: read
+
+jobs:
+  changelog:
+    runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: CHANGELOG.md has this version's section
+        id: version
+        shell: pwsh
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          if ($env:TAG -notmatch '^v(\d+\.\d+\.\d+)$') { throw "Tag $env:TAG should look like v1.1.0" }
+          $version = $Matches[1]
+          ./tools/release-notes.ps1 -Version $version
+          "version=$version" >> $env:GITHUB_OUTPUT
+
+  ci:
+    needs: changelog
+    uses: ./.github/workflows/ci.yml
+
+  offline:
+    needs: changelog
+    uses: ./.github/workflows/offline.yml
+    with:
+      version: ${{ needs.changelog.outputs.version }}
+
+  publish:
+    needs: [changelog, ci, offline]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/download-artifact@v7
+        with:
+          name: dist
+          path: dist
+
+      - name: Every download is in SHA256SUMS.txt and matches it
+        working-directory: dist
+        run: |
+          sha256sum -c SHA256SUMS.txt
+          diff <(ls | grep -vx SHA256SUMS.txt | sort) <(awk '{print $2}' SHA256SUMS.txt | sort)
+          ls -l
+
+      - name: Publish
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+          VERSION: ${{ needs.changelog.outputs.version }}
+        run: |
+          ./tools/release-notes.ps1 -Version $env:VERSION | Set-Content -LiteralPath "$env:RUNNER_TEMP/notes.md"
+          gh release create $env:TAG (Get-ChildItem dist -File).FullName --title $env:TAG --notes-file "$env:RUNNER_TEMP/notes.md" --verify-tag --latest
+          gh release view $env:TAG

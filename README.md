@@ -17,6 +17,8 @@ Each one stands alone: copy one out and it still runs. To take just one:
 iwr https://raw.githubusercontent.com/Real-Fruit-Snacks/powershell-toolbox/main/Get-RepoList.ps1 -OutFile Get-RepoList.ps1
 ```
 
+To install without git, take `powershell-toolbox-<version>-offline.zip` from the [latest release](https://github.com/Real-Fruit-Snacks/powershell-toolbox/releases/latest), `Unblock-File` it and unzip it into `$HOME\Projects`. It's the three scripts with this README, the changelog and the licence; they still need `gh` and the network when they run, because everything they do goes through GitHub.
+
 The three in it now are for GitHub repos: I had a lot of them, some dead, and no quick way to see them all at once. They wrap the [GitHub CLI](https://cli.github.com/), so they see whatever your `gh` login sees, private repos included, and need `gh` installed and logged in (`winget install GitHub.cli`, then `gh auth login`). They assume your projects live in `C:\Users\<you>\Projects`, and every file they write goes there. The [project page](https://real-fruit-snacks.github.io/powershell-toolbox/) replays each one's real run and lets you step through a `-WhatIf` review yourself.
 
 <!-- run:index -->

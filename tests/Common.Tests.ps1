@@ -1,7 +1,10 @@
 BeforeDiscovery {
     $scripts = Get-ChildItem -Path (Split-Path $PSScriptRoot -Parent) -Filter '*.ps1' | ForEach-Object { @{ Name = $_.Name; Path = $_.FullName } }
     # Test files too: 5.1 reads BOM-less UTF-8 as Windows-1252, and some of those bytes are quote characters.
-    $allPs = Get-ChildItem -Path (Split-Path $PSScriptRoot -Parent) -Include '*.ps1', '*.psd1' -Recurse | ForEach-Object { @{ Name = $_.FullName.Substring((Split-Path $PSScriptRoot -Parent).Length + 1); Path = $_.FullName } }
+    # Not offline\, which only the dev kit has: it holds third-party modules and a Python venv.
+    $allPs = Get-ChildItem -Path (Split-Path $PSScriptRoot -Parent) -Include '*.ps1', '*.psd1' -Recurse |
+        ForEach-Object { @{ Name = $_.FullName.Substring((Split-Path $PSScriptRoot -Parent).Length + 1); Path = $_.FullName } } |
+        Where-Object { $_.Name -notmatch '^offline[\\/]' }
 }
 
 BeforeAll {

@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- Two downloads on every release. `powershell-toolbox-<version>-offline.zip` is the three scripts with the README, changelog and licence, to install without git; the scripts still need `gh` and the network when they run. `powershell-toolbox-<version>-dev-windows-x64.zip` is the repo with Pester, PSScriptAnalyzer and the art's Python wheels, and `offline/setup.ps1`, to lint, test and regenerate the art on Windows with no network. `SHA256SUMS.txt` lists both.
+- `tools/build-dev-kit.ps1` builds them. `tools/versions.psd1` pins Pester, PSScriptAnalyzer and Python for CI and the dev kit alike.
+- The `offline` workflow builds the downloads, cuts off the network and runs the lint, tests and art check from the unzipped dev kit, on Windows PowerShell 5.1 and PowerShell 7. Pushing a `v*` tag now publishes the release through `release.yml`, once CI and those checks pass.
+
 ## v1.0.1 — 2026-11-05
 
 Dayshift colours match the current RFS palette, and the README and project page are new. The scripts take the same parameters and do the same things as in v1.0.0.

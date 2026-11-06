@@ -1,0 +1,211 @@
+name: offline
+
+# Builds the release downloads with tools/build-dev-kit.ps1, then proves they work with no network,
+# on Windows PowerShell 5.1 and PowerShell 7: the dev kit is unzipped into a fresh folder, every
+# proxy points at a dead port, PSGallery is unregistered, pip's index is dead and switched off and
+# its cache is new, and offline/setup.ps1 has to load the modules from the kit at the pinned
+# versions before the lint, the Pester suite and the art check run from the kit. The offline zip of
+# the scripts gets a smoke test the same way. Run it from main before tagging a release (Actions >
+# offline > Run workflow); release.yml runs it on the tag and publishes what it built.
+on:
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      version:
+        description: The version to name the downloads with, such as 1.1.0
+        type: string
+        required: true
+  push:
+    branches: [main]
+    paths: ['tools/**', '.github/workflows/offline.yml']
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: pwsh
+    outputs:
+      python: ${{ steps.versions.outputs.python }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Python version
+        id: versions
+        run: '"python=$((Import-PowerShellDataFile tools/versions.psd1).Python)" >> $env:GITHUB_OUTPUT'
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ steps.versions.outputs.python }}
+
+      - name: Build the downloads
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          $build = @{ OutDir = "$env:RUNNER_TEMP/dist" }
+          if ($env:VERSION) { $build.Version = $env:VERSION }
+          ./tools/build-dev-kit.ps1 @build
+          Get-Content "$env:RUNNER_TEMP/dist/SHA256SUMS.txt"
+
+      - uses: actions/upload-artifact@v6
+        with:
+          name: dist
+          path: ${{ runner.temp }}/dist/
+          if-no-files-found: error
+
+  offline:
+    name: offline / ${{ matrix.shell }}
+    needs: build
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shell: [powershell, pwsh]
+    defaults:
+      run:
+        shell: ${{ matrix.shell }}
+    steps:
+      # No checkout: everything after this comes from the downloads.
+      - uses: actions/download-artifact@v7
+        with:
+          name: dist
+          path: ${{ runner.temp }}/dist
+
+      # The toolchain the kit documents and doesn't bundle, installed while there's a network.
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ needs.build.outputs.python }}
+
+      - name: Unzip the downloads into fresh folders
+        run: |
+          $dist = Join-Path $env:RUNNER_TEMP 'dist'
+          Push-Location $dist
+          foreach ($line in Get-Content SHA256SUMS.txt) {
+            $hash, $name = $line -split '  ', 2
+            if ((Get-FileHash -LiteralPath $name -Algorithm SHA256).Hash -ne $hash) { throw "$name does not match SHA256SUMS.txt" }
+            "$name matches SHA256SUMS.txt"
+          }
+          Pop-Location
+          $unzip = @{ dev = '*-dev-windows-x64.zip'; run = '*-offline.zip' }
+          foreach ($k in $unzip.Keys) {
+            $zip = @(Get-ChildItem $dist -Filter $unzip[$k])
+            if ($zip.Count -ne 1) { throw "Expected one $($unzip[$k]) in $dist" }
+            $to = Join-Path $env:RUNNER_TEMP "fresh-$k"
+            Expand-Archive -LiteralPath $zip[0].FullName -DestinationPath $to
+            $top = @(Get-ChildItem $to)
+            if ($top.Count -ne 1 -or -not $top[0].PSIsContainer) { throw "$($zip[0].Name) should unzip to one folder" }
+            "$($zip[0].Name) -> $($top[0].FullName)"
+            Add-Content -LiteralPath $env:GITHUB_ENV -Encoding ascii -Value "$($k.ToUpper())=$($top[0].FullName)"
+          }
+
+      - name: Cut off the network and the registries
+        run: |
+          # For every later step. Proxies at a dead port stop pip, git, Python and PowerShell 7;
+          # the steps below also point Windows PowerShell's .NET at it, which ignores these. No
+          # firewall rules, so the runner keeps its own line to GitHub.
+          $fresh = Join-Path $env:RUNNER_TEMP 'fresh-caches'
+          New-Item -ItemType Directory -Path "$fresh/pip" -Force | Out-Null
+          @(
+            'HTTP_PROXY=http://127.0.0.1:9'
+            'HTTPS_PROXY=http://127.0.0.1:9'
+            'ALL_PROXY=http://127.0.0.1:9'
+            'NO_PROXY=localhost,127.0.0.1'
+            'PIP_INDEX_URL=http://127.0.0.1:9/simple'
+            'PIP_NO_INDEX=1'
+            'PIP_CONFIG_FILE=nul'
+            "PIP_CACHE_DIR=$fresh\pip"
+            "PSModuleAnalysisCachePath=$fresh\ModuleAnalysisCache"
+          ) | Add-Content -LiteralPath $env:GITHUB_ENV -Encoding ascii
+          # PSGallery out of both editions' PowerShellGet, and out of PSResourceGet.
+          foreach ($exe in 'powershell', 'pwsh') {
+            Write-Host "${exe}:"
+            & $exe -NoProfile -Command {
+              if (Get-PSRepository -Name PSGallery -ErrorAction SilentlyContinue) { Unregister-PSRepository -Name PSGallery }
+              if (Get-Command Unregister-PSResourceRepository -ErrorAction SilentlyContinue) {
+                if (Get-PSResourceRepository -Name PSGallery -ErrorAction SilentlyContinue) { Unregister-PSResourceRepository -Name PSGallery }
+                "  PSResourceGet repositories left: $(@(Get-PSResourceRepository -ErrorAction SilentlyContinue).Name -join ', ')"
+              }
+              "  PowerShellGet repositories left: $(@(Get-PSRepository -ErrorAction SilentlyContinue).Name -join ', ')"
+            }
+            if ($LASTEXITCODE) { throw "Unregistering PSGallery in $exe failed" }
+          }
+
+      - name: Prove it's cut off
+        run: |
+          [System.Net.WebRequest]::DefaultWebProxy = New-Object System.Net.WebProxy('http://127.0.0.1:9')
+          $ErrorActionPreference = 'Continue'
+          $reached = @()
+          try { Invoke-WebRequest https://www.powershellgallery.com/api/v2 -UseBasicParsing -TimeoutSec 20 | Out-Null; $reached += 'the PowerShell Gallery' } catch { "web request: blocked ($($_.Exception.Message))" }
+          if (Get-PSRepository -Name PSGallery -ErrorAction SilentlyContinue) { $reached += 'PSGallery is still registered' } else { 'PSGallery: not registered' }
+          $probe = Join-Path $env:RUNNER_TEMP 'probe'
+          $out = python -m pip download --no-deps -d $probe fonttools==4.66.1 2>&1 | Out-String
+          if ($LASTEXITCODE -eq 0) { $reached += 'PyPI' } else { "pip download: blocked ($(($out.Trim() -split "`n")[-1]))" }
+          $out = git ls-remote https://github.com/Real-Fruit-Snacks/powershell-toolbox 2>&1 | Out-String
+          if ($LASTEXITCODE -eq 0) { $reached += 'GitHub over git' } else { "git ls-remote: blocked ($(($out.Trim() -split "`n")[-1]))" }
+          if ($reached) { throw "Still reachable: $($reached -join ', ')" }
+          exit 0  # the blocked probes left a failing exit code
+
+      - name: Set up from the dev kit, then lint, test and check the art from it
+        run: |
+          [System.Net.WebRequest]::DefaultWebProxy = New-Object System.Net.WebProxy('http://127.0.0.1:9')
+          Set-Location $env:DEV
+          & ./offline/setup.ps1
+
+          $versions = Import-PowerShellDataFile ./tools/versions.psd1
+          foreach ($m in $versions.Modules) {
+            $loaded = @(Get-Module $m.Name)
+            $base = Join-Path $env:DEV "offline\powershell\$($m.Name)\$($m.Version)"
+            "$($m.Name): $(($loaded | ForEach-Object { "$($_.Version) from $($_.ModuleBase)" }) -join '; ')"
+            if ($loaded.Count -ne 1 -or "$($loaded[0].Version)" -ne $m.Version -or $loaded[0].ModuleBase -ne $base) {
+              throw "$($m.Name) should be $($m.Version) from $base"
+            }
+          }
+
+          Write-Host '::group::Lint'
+          $found = Invoke-ScriptAnalyzer -Path . -Settings ./PSScriptAnalyzerSettings.psd1
+          $found | Format-Table -AutoSize | Out-String -Width 200
+          Write-Host '::endgroup::'
+          if ($found) { throw 'PSScriptAnalyzer found problems' }
+
+          Write-Host '::group::Art'
+          $art = 'docs/assets/index-dark.svg', 'docs/assets/index-light.svg', 'docs/runs.js', 'docs/index.html', 'README.md'
+          $before = $art | ForEach-Object { (Get-FileHash -LiteralPath $_).Hash }
+          & ./offline/venv/Scripts/python.exe docs/art/make-art.py
+          if ($LASTEXITCODE) { throw 'make-art.py failed' }
+          $changed = for ($i = 0; $i -lt $art.Count; $i++) { if ((Get-FileHash -LiteralPath $art[$i]).Hash -ne $before[$i]) { $art[$i] } }
+          Write-Host '::endgroup::'
+          if ($changed) { throw "make-art.py changed $($changed -join ', '): the kit's art doesn't match its recordings" }
+          'Art: make-art.py left every file as it was'
+
+          $c = New-PesterConfiguration
+          $c.Run.Path = './tests'
+          $c.Run.PassThru = $true
+          $c.Output.Verbosity = 'Detailed'
+          $result = Invoke-Pester -Configuration $c
+          if ($result.Result -ne 'Passed') { throw "Pester: $($result.FailedCount) failed" }
+          exit 0  # the stub gh exits non-zero in the tests that need it to
+
+      - name: Smoke-test the offline zip of the scripts
+        run: |
+          [System.Net.WebRequest]::DefaultWebProxy = New-Object System.Net.WebProxy('http://127.0.0.1:9')
+          Set-Location $env:RUN
+          $want = 'CHANGELOG.md', 'Get-RepoDigest.ps1', 'Get-RepoList.ps1', 'Invoke-RepoReview.ps1', 'LICENSE', 'README.md'
+          $have = @(Get-ChildItem -Recurse -File | ForEach-Object Name | Sort-Object)
+          if (($have -join ',') -ne ($want -join ',')) { throw "The zip holds $($have -join ', ')" }
+          foreach ($s in Get-ChildItem -Filter '*.ps1') {
+            $errors = $null
+            [void][System.Management.Automation.Language.Parser]::ParseFile($s.FullName, [ref]$null, [ref]$errors)
+            if ($errors) { throw "$($s.Name) doesn't parse: $errors" }
+            "$($s.Name): $((Get-Help $s.FullName).Synopsis)"
+          }
+          # A real run, against the kit's stub gh instead of GitHub.
+          $env:PATH = (Join-Path $env:DEV 'tests\stub') + [IO.Path]::PathSeparator + $env:PATH
+          $env:RFS_TEST_FIXTURES = Join-Path $env:DEV 'tests\fixtures'
+          $env:RFS_PROJECTS = Join-Path $env:RUNNER_TEMP 'projects'
+          $rows = @(& ./Get-RepoList.ps1 -Format Object)
+          "Get-RepoList.ps1 with the stub gh: $($rows.Name -join ', ')"
+          if ($rows.Count -ne 4) { throw "Expected the stub's 4 repos, got $($rows.Count)" }
+          exit 0

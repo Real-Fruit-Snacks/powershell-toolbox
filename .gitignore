@@ -5,3 +5,6 @@
 /repos.csv
 /repos.json
 /repos.xml
+
+# Release downloads, from tools/build-dev-kit.ps1
+/dist/
