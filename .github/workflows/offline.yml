@@ -142,9 +142,9 @@ jobs:
           if (Get-PSRepository -Name PSGallery -ErrorAction SilentlyContinue) { $reached += 'PSGallery is still registered' } else { 'PSGallery: not registered' }
           $probe = Join-Path $env:RUNNER_TEMP 'probe'
           $out = python -m pip download --no-deps -d $probe fonttools==4.66.1 2>&1 | Out-String
-          if ($LASTEXITCODE -eq 0) { $reached += 'PyPI' } else { "pip download: blocked ($(($out.Trim() -split "`n")[-1]))" }
+          if ($LASTEXITCODE -eq 0) { $reached += 'PyPI' } else { "pip download: blocked ($(($out.Trim() -split "`n")[0]))" }
           $out = git ls-remote https://github.com/Real-Fruit-Snacks/powershell-toolbox 2>&1 | Out-String
-          if ($LASTEXITCODE -eq 0) { $reached += 'GitHub over git' } else { "git ls-remote: blocked ($(($out.Trim() -split "`n")[-1]))" }
+          if ($LASTEXITCODE -eq 0) { $reached += 'GitHub over git' } else { "git ls-remote: blocked ($(($out.Trim() -split "`n")[0]))" }
           if ($reached) { throw "Still reachable: $($reached -join ', ')" }
           exit 0  # the blocked probes left a failing exit code
 
