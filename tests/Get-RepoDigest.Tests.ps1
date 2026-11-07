@@ -63,6 +63,15 @@ Describe 'Get-RepoDigest' {
         $digest | Should -Match '_README not fetched: .*rate limit'
         $digest | Should -Match "- Top level: \(couldn't fetch: .*rate limit"
         "$warnings" | Should -Match 'rate limit'
+        "$warnings" | Should -Match 'GitHub call\(s\) failed'
+    }
+
+    It 'treats a 404 as nothing to fetch, without a warning' {
+        $warnings = & $script -GitHub -OutFile $out 3>&1 6>$null
+        $warnings | Should -BeNullOrEmpty
+        $digest = [IO.File]::ReadAllText($out)
+        $digest | Should -Match '(?s)### test-owner/no-readme.*_No README found._'
+        $digest | Should -Not -Match "couldn't fetch|not fetched"
     }
 
     It 'writes repos-digest.md in the projects folder by default' {

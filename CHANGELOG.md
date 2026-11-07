@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+- `Get-RepoDigest.ps1` copied credentials from a local repo's remote URL (`https://user:token@...`, `gcrypt::https://user:token@...`) into the digest. The `user:password@` part is now left out; an ssh login name with no password (`ssh://git@host/...`) stays.
+- `Get-RepoDigest.ps1 -GitHub` wrote `No README found` when fetching a README failed (rate limit, network, permissions), and dropped the file list without a word. Only a 404 now counts as missing; other failures get a warning and a note in the digest.
+
 ## v1.1.0 — 2026-11-05
 
 Each release now has two downloads: a zip of the three scripts, to install without git, and a dev kit to lint, test and work on them on Windows with no network. The scripts take the same parameters and do the same things as in v1.0.1, and still need gh and the network when they run.

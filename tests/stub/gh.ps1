@@ -28,7 +28,9 @@ switch -Regex ($line) {
         ConvertTo-Json -InputObject @($repos) -Depth 5
         exit 0
     }
-    '^api repos/[^/]+/[^/]+/contents' {
+    '^api repos/[^/]+/(?<name>[^/]+)/contents' {
+        # no-readme is an empty repo (isEmpty), and GitHub answers 404 for an empty repo's contents.
+        if ($Matches.name -eq 'no-readme') { Write-Error 'gh: This repository is empty. (HTTP 404)'; exit 1 }
         Get-Content -Raw -Encoding UTF8 -LiteralPath (Join-Path $fixtures 'contents.json')
         exit 0
     }
