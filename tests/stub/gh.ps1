@@ -3,10 +3,15 @@
 #   RFS_TEST_GH_LOG    file that gets one line per call
 #   RFS_TEST_AUTH      'fail' makes `gh auth status` exit 1
 #   RFS_TEST_SCOPES    scope list printed by `gh auth status`
-#   RFS_TEST_FAIL      'list', 'archive' or 'delete' makes that call exit 1
+#   RFS_TEST_FAIL      'list', 'archive' or 'delete' makes that call exit 1;
+#                      'api' makes every `gh api` call fail as it does when rate limited
 $line = $args -join ' '
 if ($env:RFS_TEST_GH_LOG) { Add-Content -LiteralPath $env:RFS_TEST_GH_LOG -Value $line -WhatIf:$false }
 $fixtures = $env:RFS_TEST_FIXTURES
+if ($env:RFS_TEST_FAIL -eq 'api' -and $line -match '^api ') {
+    Write-Error 'gh: API rate limit exceeded for user ID 1. (HTTP 403)'
+    exit 1
+}
 
 switch -Regex ($line) {
     '^auth status' {

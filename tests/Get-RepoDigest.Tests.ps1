@@ -55,6 +55,16 @@ Describe 'Get-RepoDigest' {
         }
     }
 
+    It 'says when gh could not fetch a README or file list, instead of calling it missing' {
+        $env:RFS_TEST_FAIL = 'api'
+        $warnings = & $script -GitHub -OutFile $out 3>&1 6>$null
+        $digest = [IO.File]::ReadAllText($out)
+        $digest | Should -Not -Match '_No README found\._'
+        $digest | Should -Match '_README not fetched: .*rate limit'
+        $digest | Should -Match "- Top level: \(couldn't fetch: .*rate limit"
+        "$warnings" | Should -Match 'rate limit'
+    }
+
     It 'writes repos-digest.md in the projects folder by default' {
         & $script -GitHub 6>$null
         Test-Path (Join-Path $env:RFS_PROJECTS 'repos-digest.md') | Should -BeTrue

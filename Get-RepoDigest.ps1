@@ -204,6 +204,17 @@ function Format-Pushed ($Value, [string] $Format) {
     ([datetime]$Value).ToUniversalTime().ToString($Format)
 }
 
+function Test-GhNotFound ($Result) {
+    # gh says 'HTTP 404' when the thing asked for doesn't exist.
+    "$($Result.Err)" -match 'HTTP 404'
+}
+
+function Get-GhError ($Result) {
+    # gh's own message for a failed call, on one line.
+    $text = @("$($Result.Err)" -split '\r?\n' | ForEach-Object { $_.Trim() } | Where-Object { $_ }) -join ' '
+    if ($text) { $text } else { "gh exited with code $($Result.ExitCode)" }
+}
+
 function Add-Readme ([string] $Text, [int] $Max) {
     Add-Line
     if ($Text) {
@@ -251,6 +262,7 @@ if ($GitHub) {
     Add-Line
 
     $i = 0
+    $failed = 0
     foreach ($r in $repos) {
         $i++
         Write-Ink "  [$i/$($repos.Count)] $($r.nameWithOwner)" mute
@@ -264,16 +276,37 @@ if ($GitHub) {
         $topics = @($r.repositoryTopics | Where-Object { $_ } | ForEach-Object { $_.name }) -join ', '
         if ($topics) { Add-Line "- Topics: $topics" }
 
+        # A 404 means there is nothing to fetch (an empty repo, no README). Any other
+        # failure (rate limit, network, permissions) is reported, never shown as absent.
         $tree = Invoke-Gh @('api', "repos/$($r.nameWithOwner)/contents")
-        if ($tree.ExitCode -eq 0 -and $tree.Out) {
-            $names = ConvertFrom-GhJson $tree.Out |
-                ForEach-Object { if ($_.type -eq 'dir') { "$($_.name)/" } else { $_.name } }
-            Add-Line "- Top level: $($names -join ', ')"
+        if ($tree.ExitCode -eq 0) {
+            if ($tree.Out) {
+                $names = ConvertFrom-GhJson $tree.Out |
+                    ForEach-Object { if ($_.type -eq 'dir') { "$($_.name)/" } else { $_.name } }
+                Add-Line "- Top level: $($names -join ', ')"
+            }
+        } elseif (-not (Test-GhNotFound $tree)) {
+            $why = Get-GhError $tree
+            $failed++
+            Write-Warning "$($r.nameWithOwner): couldn't list its files: $why"
+            Add-Line "- Top level: (couldn't fetch: $why)"
         }
 
         $readme = Invoke-Gh @('api', "repos/$($r.nameWithOwner)/readme", '-H', 'Accept: application/vnd.github.raw')
-        Add-Readme -Max $MaxReadmeChars -Text $(if ($readme.ExitCode -eq 0) { $readme.Out } else { '' })
+        if ($readme.ExitCode -eq 0) {
+            Add-Readme -Max $MaxReadmeChars -Text $readme.Out
+        } elseif (Test-GhNotFound $readme) {
+            Add-Readme -Max $MaxReadmeChars -Text ''
+        } else {
+            $why = Get-GhError $readme
+            $failed++
+            Write-Warning "$($r.nameWithOwner): couldn't fetch its README: $why"
+            Add-Line
+            Add-Line "_README not fetched: $($why)_"
+            Add-Line
+        }
     }
+    if ($failed) { Write-Warning "$failed GitHub call(s) failed. The digest marks what couldn't be fetched." }
 }
 
 # --- Local -------------------------------------------------------------------
