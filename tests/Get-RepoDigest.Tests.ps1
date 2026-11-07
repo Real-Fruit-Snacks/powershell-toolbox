@@ -122,6 +122,18 @@ Describe 'Get-RepoDigest' {
             [IO.File]::ReadAllText($out) | Should -Match '(?s)### git-no-remote.*Uncommitted changes: 0'
         }
 
+        It 'leaves credentials out of a remote URL' -Skip:(-not (Get-Command git -ErrorAction SilentlyContinue)) {
+            $credRoot = Join-Path $TestDrive 'creds'
+            $credRepo = Join-Path $credRoot 'proj'
+            New-Item -ItemType Directory -Path $credRepo -Force | Out-Null
+            git init -q $credRepo 2>$null
+            git -C $credRepo remote add origin 'https://someone:ghp_FAKEtoken0123@github.com/someone/proj.git' 2>$null
+            & $script -LocalRoot $credRoot -OutFile $out 6>$null
+            $digest = [IO.File]::ReadAllText($out)
+            $digest | Should -Not -Match 'ghp_FAKEtoken0123'
+            $digest | Should -Match '- Remote: https://github\.com/someone/proj\.git'
+        }
+
         It 'warns about a missing root and carries on' {
             & $script -LocalRoot (Join-Path $TestDrive 'nope'), $root -OutFile $out 3>&1 6>$null | Should -Match 'Not found'
             [IO.File]::ReadAllText($out) | Should -Match '### plain-folder'

@@ -192,6 +192,12 @@ function Get-Fence ([string] $Text) {
     return ('`' * [Math]::Max(4, $longest + 1))
 }
 
+function Hide-UrlCredential ([string] $Url) {
+    # Drops the user:password@ (or token@) part of a URL, so a credential saved in a git
+    # remote never reaches the digest. scp-style remotes (git@host:path) carry no password.
+    $Url -replace '^([A-Za-z][A-Za-z0-9+.-]*://)[^/?#]*@', '$1'
+}
+
 function Format-Pushed ($Value, [string] $Format) {
     # gh gives an ISO string; PowerShell 7's ConvertFrom-Json has already made it a DateTime.
     if (-not $Value) { return '' }
@@ -308,7 +314,7 @@ if ($roots.Count -gt 0) {
             } finally {
                 $ErrorActionPreference = 'Stop'
             }
-            if ($remote) { Add-Line "- Remote: $remote" }
+            if ($remote) { Add-Line "- Remote: $(Hide-UrlCredential $remote)" }
             Add-Line "- Branch: $branch | Commits: $count | Uncommitted changes: $dirty"
             if ($last) { Add-Line "- Last commit: $last" }
         } else {
