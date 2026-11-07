@@ -134,14 +134,29 @@ Describe 'Get-RepoDigest' {
 
         It 'leaves credentials out of a remote URL' -Skip:(-not (Get-Command git -ErrorAction SilentlyContinue)) {
             $credRoot = Join-Path $TestDrive 'creds'
-            $credRepo = Join-Path $credRoot 'proj'
-            New-Item -ItemType Directory -Path $credRepo -Force | Out-Null
-            git init -q $credRepo 2>$null
-            git -C $credRepo remote add origin 'https://someone:ghp_FAKEtoken0123@github.com/someone/proj.git' 2>$null
+            $remotes = @{
+                'user-token'  = 'https://someone:ghp_FAKEtoken0123@github.com/someone/proj.git'
+                'token-only'  = 'https://ghp_FAKEtoken0456@github.com/someone/two.git'
+                'transport'   = 'gcrypt::https://someone:ghp_FAKEtoken0789@example.com/three.git'
+                'scp-style'   = 'git@github.com:someone/four.git'
+                'ssh-user'    = 'ssh://git@github.com/someone/five.git'
+                'ssh-pass'    = 'ssh://someone:ghp_FAKEtoken0999@example.com/six.git'
+            }
+            foreach ($name in $remotes.Keys) {
+                $credRepo = Join-Path $credRoot $name
+                New-Item -ItemType Directory -Path $credRepo -Force | Out-Null
+                git init -q $credRepo 2>$null
+                git -C $credRepo remote add origin $remotes[$name] 2>$null
+            }
             & $script -LocalRoot $credRoot -OutFile $out 6>$null
             $digest = [IO.File]::ReadAllText($out)
-            $digest | Should -Not -Match 'ghp_FAKEtoken0123'
+            $digest | Should -Not -Match 'ghp_FAKEtoken'
             $digest | Should -Match '- Remote: https://github\.com/someone/proj\.git'
+            $digest | Should -Match '- Remote: https://github\.com/someone/two\.git'
+            $digest | Should -Match '- Remote: gcrypt::https://example\.com/three\.git'
+            $digest | Should -Match '- Remote: git@github\.com:someone/four\.git'
+            $digest | Should -Match '- Remote: ssh://git@github\.com/someone/five\.git'
+            $digest | Should -Match '- Remote: ssh://example\.com/six\.git'
         }
 
         It 'warns about a missing root and carries on' {

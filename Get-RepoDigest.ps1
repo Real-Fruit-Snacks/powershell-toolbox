@@ -194,8 +194,13 @@ function Get-Fence ([string] $Text) {
 
 function Hide-UrlCredential ([string] $Url) {
     # Drops the user:password@ (or token@) part of a URL, so a credential saved in a git
-    # remote never reaches the digest. scp-style remotes (git@host:path) carry no password.
-    $Url -replace '^([A-Za-z][A-Za-z0-9+.-]*://)[^/?#]*@', '$1'
+    # remote never reaches the digest. Handles git's <transport>::<url> form too.
+    # An ssh user with no password (ssh://git@host/path) is the login name, not a secret,
+    # so it stays; scp-style remotes (git@host:path) carry no password either.
+    $m = [regex]::Match($Url, '^((?:[A-Za-z][A-Za-z0-9+.-]*::)?([A-Za-z][A-Za-z0-9+.-]*)://)([^/?#]*)@')
+    if (-not $m.Success) { return $Url }
+    if ($m.Groups[2].Value -match 'ssh' -and $m.Groups[3].Value -notmatch ':') { return $Url }
+    $m.Groups[1].Value + $Url.Substring($m.Length)
 }
 
 function Format-Pushed ($Value, [string] $Format) {
