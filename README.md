@@ -4,7 +4,7 @@ A grab-bag of my PowerShell scripts, each one standalone
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/index-dark.svg">
-  <img alt="An index of the three scripts, each name split at its hyphen: Get-RepoList, Get-RepoDigest, Invoke-RepoReview. Below it a console replays each one's real run in turn: the repo table, the digest counting 17 repos to 'Wrote repos-digest.md', and a -WhatIf review that keeps one repo and prints what archiving the next would do" src="docs/assets/index-light.svg" width="100%">
+  <img alt="An index of the three scripts, each name split at its hyphen: Get-RepoList, Get-RepoDigest, Invoke-RepoReview. Below it a console replays each one's real run in turn: the repo table, the digest counting 16 repos to 'Wrote repos-digest.md', and a -WhatIf review that keeps one repo and prints what archiving the next would do" src="docs/assets/index-light.svg" width="100%">
 </picture>
 
 ```powershell
@@ -46,11 +46,11 @@ The three in it now are for GitHub repos: I had a lot of them, some dead, and no
 PS> .\Invoke-RepoReview.ps1 -SortBy size -WhatIf
 Fetching repos
 
-Reviewing 17 repos, sorted by size. Dry run: nothing will change.
-Log: C:\Users\you\Projects\repo-review-20261122-210142.log
+Reviewing 16 repos, sorted by size. Dry run: nothing will change.
+Log: C:\Users\you\Projects\repo-review-20261122-212625.log
 
 ----------------------------------------------------------------------
-[1/17] Real-Fruit-Snacks/open-file
+[1/16] Real-Fruit-Snacks/open-file
    public   28.4 MB   last push 2026-11-16 (6 days ago)
    Learn and play chess in your browser, offline: 75 lessons with a coach, 48,000 puzzles, Stockfish 19 and a human-like opponent. No account, no ads, no tracking.
    https://github.com/Real-Fruit-Snacks/open-file
@@ -58,7 +58,7 @@ Log: C:\Users\you\Projects\repo-review-20261122-210142.log
    [D] delete   [A] archive   [K] keep   [O] open in browser   [Q] quit  k
 
 ----------------------------------------------------------------------
-[2/17] Real-Fruit-Snacks/certapi
+[2/16] Real-Fruit-Snacks/certapi
    public   7.1 MB    last push 2026-11-22 (0 days ago)
    mTLS API client for the Windows certificate store. Windows signs the handshake, so the key never leaves the store. CLI and desktop app.
    https://github.com/Real-Fruit-Snacks/certapi
@@ -67,15 +67,15 @@ Log: C:\Users\you\Projects\repo-review-20261122-210142.log
 What if: Performing the operation "Archive repository" on target "Real-Fruit-Snacks/certapi".
 
 ----------------------------------------------------------------------
-[3/17] Real-Fruit-Snacks/rfs-brand
+[3/16] Real-Fruit-Snacks/rfs-brand
    public   3.6 MB    last push 2026-11-22 (0 days ago)
    RFS brand, profile art and repo templates
    https://github.com/Real-Fruit-Snacks/rfs-brand
 
    [D] delete   [A] archive   [K] keep   [O] open in browser   [Q] quit  q
 
-Stopped. Deleted: 0  Archived: 0  Kept: 1  Failed: 0  Remaining: 15
-Log: C:\Users\you\Projects\repo-review-20261122-210142.log
+Stopped. Deleted: 0  Archived: 0  Kept: 1  Failed: 0  Remaining: 14
+Log: C:\Users\you\Projects\repo-review-20261122-212625.log
 ```
 <!-- /run:review -->
 
