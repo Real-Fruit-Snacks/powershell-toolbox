@@ -7,16 +7,16 @@ Name                        Status           Language   Pushed     Description
 agent-toolkit               public, archived PowerShell 2026-11-22 RETIRED: T3 Code, Claude Code and the tools around them on Windows without admin rights, VDI desktops included: one GitHub release, rebuilt every Sunday, that installs into your own account from its own files.
 amazon-order-sync           public           Rust       2026-11-13 Syncs your Amazon orders into local Markdown notes
 carify                      public           Shell      2026-11-14 Convert video for Uconnect USB playback, via ffmpeg
-certapi                     public           C#         2026-11-22 mTLS API client for the Windows certificate store. Windows signs the handshake, so the key never leaves the store. CLI and desktop app.
+certapi                     public           C#         2026-11-22 mTLS API client for the Windows certificate store
 dev-toolkit                 public, archived Python     2026-11-06 RETIRED: Developer tools for an offline Windows machine where you aren't an admin: one GitHub release, rebuilt every Sunday, with Rust, Python, Node and .NET toolchains and their package caches.
 forge-framework             public, archived Python     2026-08-06 RETIRED: Modular offensive-security framework with a Metasploit-style console - 60+ modules covering Active Directory, AD CS, Kerberos, SMB and web attacks, a persistent evidence workspace, and self-contained Docker labs (Samba AD DC, Windows Server 2022, Windows 11, Enterprise CA) that every module is integration-tested against.
 identity-gen                public           HTML       2026-11-14 Offline generator for throwaway signup identities
 Kraken                      public, archived Rust       2026-06-20 OPSEC-first Rust C2 framework with minimal core and runtime modules
 Lure                        public, archived Python     2026-06-20 SMB hash bait for authorized red team engagements - drops poisoned .url/.scf/.xml payloads onto writable shares to coerce NTLM authentication via Responder
 Maelstrom                   public, archived Python     2026-06-20 NetExec wrapper combining 35+ AD enumeration modules into a single command
-open-file                   public           TypeScript 2026-11-16 Learn and play chess in your browser, offline: 75 lessons with a coach, 48,000 puzzles, Stockfish 19 and a human-like opponent. No account, no ads, no tracking.
+open-file                   public           TypeScript 2026-11-16 Learn and play chess in your browser, offline
 port-sync                   public           Rust       2026-11-13 Keeps qBittorrent's port synced to Proton VPN
-powershell-toolbox          public           PowerShell 2026-11-22 A grab-bag of my PowerShell scripts, each one standalone: list, digest and review your GitHub repos through gh
+powershell-toolbox          public           PowerShell 2026-11-22 A grab-bag of my PowerShell scripts, each one standalone
 pwn-broker                  public           Python     2026-11-22 Keeps a box's targets, notes, creds and tools in order
 pwn-playbooks               public           Python     2026-11-22 Playbooks for pwn-broker: read into the note, fill in, run
 pwn-shop                    public           Python     2026-11-22 Tool packages for pwn-broker, built from upstream releases

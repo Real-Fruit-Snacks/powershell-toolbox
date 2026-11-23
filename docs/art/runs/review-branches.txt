@@ -3,12 +3,12 @@
 [38;2;138;143;153mFetching repos[0m
 
 Reviewing 16 repos, sorted by size. Dry run: nothing will change.
-[38;2;138;143;153mLog: C:\Users\you\Projects\repo-review-20261122-212636.log[0m
+[38;2;138;143;153mLog: C:\Users\you\Projects\repo-review-20261122-214223.log[0m
 
 [38;2;138;143;153m----------------------------------------------------------------------[0m
 [38;2;255;106;61m[1/16] [0mReal-Fruit-Snacks/open-file
 [38;2;138;143;153m   public   28.4 MB   last push 2026-11-16 (6 days ago)[0m
-   Learn and play chess in your browser, offline: 75 lessons with a coach, 48,000 puzzles, Stockfish 19 and a human-like opponent. No account, no ads, no tracking.
+   Learn and play chess in your browser, offline
 [38;2;138;143;153m   https://github.com/Real-Fruit-Snacks/open-file[0m
 
 [38;2;255;194;71m   [D] delete   [A] archive   [K] keep   [O] open in browser   [Q] quit  [0mo
@@ -24,10 +24,10 @@ What if: Performing the operation "Delete repository" on target "Real-Fruit-Snac
 [38;2;138;143;153m----------------------------------------------------------------------[0m
 [38;2;255;106;61m[2/16] [0mReal-Fruit-Snacks/certapi
 [38;2;138;143;153m   public   7.1 MB    last push 2026-11-22 (0 days ago)[0m
-   mTLS API client for the Windows certificate store. Windows signs the handshake, so the key never leaves the store. CLI and desktop app.
+   mTLS API client for the Windows certificate store
 [38;2;138;143;153m   https://github.com/Real-Fruit-Snacks/certapi[0m
 
 [38;2;255;194;71m   [D] delete   [A] archive   [K] keep   [O] open in browser   [Q] quit  [0mq
 
 Stopped. Deleted: 0  Archived: 0  Kept: 0  Failed: 0  Remaining: 15
-[38;2;138;143;153mLog: C:\Users\you\Projects\repo-review-20261122-212636.log[0m
+[38;2;138;143;153mLog: C:\Users\you\Projects\repo-review-20261122-214223.log[0m

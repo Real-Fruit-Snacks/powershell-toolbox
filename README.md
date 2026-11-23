@@ -47,12 +47,12 @@ PS> .\Invoke-RepoReview.ps1 -SortBy size -WhatIf
 Fetching repos
 
 Reviewing 16 repos, sorted by size. Dry run: nothing will change.
-Log: C:\Users\you\Projects\repo-review-20261122-212625.log
+Log: C:\Users\you\Projects\repo-review-20261122-214212.log
 
 ----------------------------------------------------------------------
 [1/16] Real-Fruit-Snacks/open-file
    public   28.4 MB   last push 2026-11-16 (6 days ago)
-   Learn and play chess in your browser, offline: 75 lessons with a coach, 48,000 puzzles, Stockfish 19 and a human-like opponent. No account, no ads, no tracking.
+   Learn and play chess in your browser, offline
    https://github.com/Real-Fruit-Snacks/open-file
 
    [D] delete   [A] archive   [K] keep   [O] open in browser   [Q] quit  k
@@ -60,7 +60,7 @@ Log: C:\Users\you\Projects\repo-review-20261122-212625.log
 ----------------------------------------------------------------------
 [2/16] Real-Fruit-Snacks/certapi
    public   7.1 MB    last push 2026-11-22 (0 days ago)
-   mTLS API client for the Windows certificate store. Windows signs the handshake, so the key never leaves the store. CLI and desktop app.
+   mTLS API client for the Windows certificate store
    https://github.com/Real-Fruit-Snacks/certapi
 
    [D] delete   [A] archive   [K] keep   [O] open in browser   [Q] quit  a
@@ -75,7 +75,7 @@ What if: Performing the operation "Archive repository" on target "Real-Fruit-Sna
    [D] delete   [A] archive   [K] keep   [O] open in browser   [Q] quit  q
 
 Stopped. Deleted: 0  Archived: 0  Kept: 1  Failed: 0  Remaining: 14
-Log: C:\Users\you\Projects\repo-review-20261122-212625.log
+Log: C:\Users\you\Projects\repo-review-20261122-214212.log
 ```
 <!-- /run:review -->
 
