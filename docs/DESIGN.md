@@ -25,7 +25,7 @@ The RFS Nightshift and Dayshift values and nothing else, used the way the script
 | code | `#070809` | `#FFFFFF` | The console and command boxes |
 | line / line-strong | `#262A33` / `#636872` | `#D6D3CB` / `#89867F` | Rules; the hyphens of names not picked; Format-Table dashes |
 | ink / mute | `#E8E6E1` / `#8A8F99` | `#1A1B1E` / `#666A73` | Text; names not picked |
-| Ember | `#FF6A3D` | `#C03B0A` | The hyphen of the picked script, focus rings, copy on hover. In the console, the `[n/16]` counter, as the script prints it |
+| Ember | `#FF6A3D` | `#C03B0A` | The hyphen of the picked script, focus rings, copy on hover. In the console, the `[n/N]` counter, as the script prints it |
 | Amber | `#FFC247` | `#925F00` | The review's prompt and its keys: something waiting for you |
 | Mint | `#3DDC97` | `#15794D` | Success only: `Wrote ... repos-digest.md` |
 | Raspberry | `#F06292` | `#B0306A` | The word "delete" on the D key |
@@ -54,7 +54,7 @@ On load the names assemble at their hyphens (verbs in from the left, nouns from 
 
 ## The recordings
 
-`art/Record-Runs.ps1` runs the scripts for real against the account gh is logged in as and saves the console output with its ANSI colours to `art/runs/`. While it records, `gh repo list` sees public repos only, `gh repo archive` and `gh repo delete` throw before reaching GitHub, Read-Host answers come from a list, and output files go to a temp folder. Paths read `C:\Users\you\Projects`, in place of the account name and that temp folder; the captions say so. The digest took 17.5 s for 16 repos when timed; the page plays it faster and says so.
+`art/Record-Runs.ps1` runs the scripts for real against the account gh is logged in as and saves the console output with its ANSI colours to `art/runs/`. While it records, `gh repo list` sees public repos only, `gh repo archive` and `gh repo delete` throw before reaching GitHub, Read-Host answers come from a list, and output files go to a temp folder. Paths read `C:\Users\you\Projects`, in place of the account name and that temp folder; the captions say so. The page plays the digest faster than the real run and says so.
 
 ## Motion
 

@@ -293,7 +293,7 @@ def sessions(rv):
     tt += len(dcmd) / TYPE_CPS + 0.3
     for line in dlines:
         s["rows"].append(("out", line, tt))
-        tt += 0.11 if "/16]" in plain(line) else 0.2
+        tt += 0.11 if re.search(r"/\d+\]", plain(line)) else 0.2
     s["rows"].append(("out", [], tt))
     s["rows"].append(("cmd", gcmd, tt + 0.5))
     tt += 0.5 + len(gcmd) / TYPE_CPS + 0.3
