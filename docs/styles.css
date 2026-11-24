@@ -120,8 +120,7 @@ html:not(.js) .js-only, html:not(.js) .copy { display: none; }
 .page-scroll {
   position: relative;
   background:
-    radial-gradient(62% 48% at 14% 0%, color-mix(in oklab, var(--rfs-steel) 24%, transparent), transparent 68%),
-    radial-gradient(56% 44% at 88% 4%, color-mix(in oklab, var(--rfs-beacon) 16%, transparent), transparent 68%),
+    linear-gradient(125deg in oklab, color-mix(in oklab, var(--rfs-steel) 16%, transparent) 0%, transparent 48%, color-mix(in oklab, var(--rfs-beacon) 12%, transparent) 100%),
     var(--rfs-bg);
 }
 @media (prefers-reduced-motion: no-preference) {
@@ -636,8 +635,8 @@ html:not(.js) .again { display: none; }
 .foot a { color: var(--rfs-text); text-decoration-color: var(--rfs-line-strong); }
 
 @media print {
-  .rfs-shell { height: auto; overflow: visible; }
-  .rfs-scroll-region { overflow: visible; }
+  html, body, .rfs-shell { height: auto !important; overflow: visible !important; }
+  .rfs-scroll-region { overflow: visible !important; }
   .top-nav, .theme-btn, .keys, .again, .copy, .rfs-skip { display: none; }
   .screen { height: auto; overflow: visible; }
 }
