@@ -56,7 +56,7 @@
 
 /* ---------- base reset ---------- */
 *, *::before, *::after { box-sizing: border-box; }
-html { background: var(--rfs-bg); -webkit-text-size-adjust: 100%; }
+html { height: 100%; overflow: hidden; background: var(--rfs-bg); -webkit-text-size-adjust: 100%; }
 body {
   margin: 0;
   padding: 0;
@@ -331,6 +331,47 @@ html:not(.js) .js-only, html:not(.js) .copy { display: none; }
 .row:focus-visible { outline-offset: -2px; }
 html:not(.js) .row { cursor: default; }
 
+@media (min-width: 720px) and (max-width: 1179px) {
+  .index {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: .75rem;
+    margin: 0;
+  }
+  .row {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: .85rem .95rem;
+    background: var(--rfs-code-bg);
+    border-color: var(--rfs-line);
+  }
+  .row[aria-selected="true"] {
+    background: var(--rfs-surface);
+    border-color: var(--rfs-beacon);
+  }
+  .row .nm {
+    display: inline-flex;
+    flex-wrap: nowrap;
+    align-items: baseline;
+    font-size: clamp(.98rem, .75rem + .45vw, 1.18rem);
+    letter-spacing: -.01em;
+  }
+  .row .nm .hy {
+    width: .55em;
+    margin-inline: .12em;
+    flex: none;
+  }
+  .row .ext { font-size: .72rem; margin-left: .25em; }
+  .row .syn {
+    padding-left: 0;
+    max-width: none;
+    margin-top: .45rem;
+    font-size: .82rem;
+    line-height: 1.45;
+  }
+}
+
 @media (max-width: 560px) {
   .row .syn { padding-left: 0; max-width: none; }
 }
@@ -381,9 +422,10 @@ html:not(.js) .panel + .panel { margin-top: 1.5rem; }
 }
 .cap code { font-size: max(12px, .92em); }
 .screen {
-  height: 24rem;
+  height: 25rem;
   overflow: auto;
-  padding: 1rem;
+  overscroll-behavior: contain;
+  padding: 1rem 1rem 1.25rem;
   font-size: .76rem;
   line-height: 1.62;
   white-space: pre;

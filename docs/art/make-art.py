@@ -246,18 +246,26 @@ def wrap(s, size, fname, wght, width):
 
 # ---------------------------------------------------------------- the README index, animated
 THEMES = {
-    "dark": dict(plate="#0C0C10", line="#2A2C35", strong="#676B78", ink="#F4F5F8", mute="#B3B5C0", code="#050507",
-                 text="#F4F5F8", steel="#74B8E8", ember="#FF9254", beacon="#F06E2B", amber="#FFC247", mint="#3DDC97", sel="#14141A"),
-    "light": dict(plate="#FFFFFF", line="#D2DAE2", strong="#6E7784", ink="#0D1016", mute="#525B69", code="#F5F7F9",
-                  text="#0D1016", steel="#164669", ember="#AD3D0A", beacon="#BD4811", amber="#885800", mint="#127247", sel="#E9EEF3"),
+    "dark": dict(
+        plate="#0C0C10", face="#050507", hub="#14141A", line="#2A2C35", strong="#676B78",
+        ink="#F4F5F8", mute="#B3B5C0", code="#050507", text="#F4F5F8",
+        steel="#74B8E8", ember="#FF9254", beacon="#F06E2B", ember_tint="#21130C",
+        amber="#FFC247", mint="#3DDC97", sel="#14141A",
+    ),
+    "light": dict(
+        plate="#FFFFFF", face="#F5F7F9", hub="#E9EEF3", line="#D2DAE2", strong="#6E7784",
+        ink="#0D1016", mute="#525B69", code="#F5F7F9", text="#0D1016",
+        steel="#164669", ember="#AD3D0A", beacon="#BD4811", ember_tint="#FDF0E9",
+        amber="#885800", mint="#127247", sel="#FFFFFF",
+    ),
 }
-W, H = 1000, 584
+W, H = 1000, 588
 CYCLE = 21.0
-PAD = 44
-NAME_SIZE, NAME_W = 52, 800
-CON_X, CON_Y, CON_W, CON_H = PAD, 292, W - 2 * PAD, H - 292 - PAD
-MONO_SIZE, LH = 15, 21
-CAP = 11            # console lines visible at once
+PAD = 28
+CON_X, CON_Y, CON_W, CON_H = PAD, 198, W - 2 * PAD, 354
+CON_HEAD_H = 36
+MONO_SIZE, LH = 13.0, 24
+CAP = 12            # 12 lines * 24px = 288px cleanly inside 318px console body
 TYPE_CPS = 22       # characters per second when a command is typed
 
 
@@ -335,48 +343,85 @@ def sessions(rv):
 def build_svg(theme, rv, syn):
     c = THEMES[theme]
     css, body = [], []
-
-    # ---- the index: names hung on their hyphens ----
-    verbs = [s.split("-")[0] for s in SCRIPTS]
-    nouns = [s.split("-", 1)[1] for s in SCRIPTS]
-    vw = max(advance(v, NAME_SIZE, CHIVO, NAME_W, -0.01) for v in verbs)
-    hyph = advance("-", NAME_SIZE, CHIVO, NAME_W)
-    axis = PAD + 8 + vw
-    syn_x = PAD + 8 + vw + hyph + max(advance(n, NAME_SIZE, CHIVO, NAME_W, -0.01) for n in nouns) + 40
-    syn_w = W - PAD - 16 - syn_x
-    row_y = [100, 176, 252]
     sess = sessions(rv)
-    for i, (v, n) in enumerate(zip(verbs, nouns)):
+    rec_date = rv["recorded"].split(",")[0]
+
+    # ---- Top telemetry header bar (y = 3..52) ----
+    body.append('<g clip-path="url(#card-clip)">')
+    body.append(f'<rect x="0" y="0" width="{W}" height="52" fill="{c["face"]}"/>')
+    body.append(f'<rect x="0" y="0" width="{W}" height="3" fill="url(#horizon)"/>')
+    body.append("</g>")
+    body.append(f'<line x1="1" y1="52" x2="{W - 1}" y2="52" stroke="{c["line"]}"/>')
+    badge_txt = "POWERSHELL-TOOLBOX"
+    bw = advance(badge_txt, 11.5, MONO, 600, ls=0.04) + 20
+    body.append(f'<rect x="{PAD}" y="15" width="{bw:.1f}" height="24" rx="4" fill="{c["hub"]}" stroke="{c["line"]}"/>')
+    body.append(text(badge_txt, PAD + 10, 31.2, 11.5, MONO, 600, c["steel"], ls=0.04))
+    meta_txt = f"3 SCRIPTS · POWERSHELL 5.1 & 7 · RECORDED {rec_date}"
+    mw = advance(meta_txt, 11, MONO, 400, ls=0.04)
+    body.append(text(meta_txt, W - PAD - mw, 31.2, 11, MONO, 400, c["mute"], ls=0.04))
+
+    # ---- 3-column horizontal script selector cards (y = 68..182) ----
+    tab_gap = 14
+    tab_w = (W - 2 * PAD - 2 * tab_gap) / 3
+    tab_y, tab_h = 68, 114
+    for i, script_name in enumerate(SCRIPTS):
+        verb, noun = script_name.split("-", 1)
         win = [(s["start"], s["end"]) for s in sess if s["script"] == i]
-        sel_static = i == 2   # the still frame: Invoke-RepoReview, waiting at its prompt
-        y = row_y[i]
+        sel_static = i == 2   # static fallback: Invoke-RepoReview waiting at prompt
+        tx = PAD + i * (tab_w + tab_gap)
         cls = f"r{i}"
         css.append(windows_css(f"{cls}bg", win))
         css.append(windows_css(f"{cls}nm", win, "fill", c["ink"], c["mute"]))
         css.append(windows_css(f"{cls}hy", win, "fill", c["ember"], c["strong"]))
-        body.append(f'<rect class="{cls}bg" x="{PAD - 4}" y="{y - 46}" width="{W - 2 * PAD + 8}" height="62" rx="10" fill="{c["sel"]}"'
-                    f' style="opacity:{1 if sel_static else 0}"/>')
+        # Base inactive card
+        body.append(f'<rect x="{tx:.1f}" y="{tab_y}" width="{tab_w:.1f}" height="{tab_h}" rx="6" fill="{c["face"]}" stroke="{c["line"]}"/>')
+        # Active card highlight + 3px Beacon top bar
+        body.append(
+            f'<g class="{cls}bg" style="opacity:{1 if sel_static else 0}">'
+            f'<rect x="{tx:.1f}" y="{tab_y}" width="{tab_w:.1f}" height="{tab_h}" rx="6" fill="{c["sel"]}" stroke="{c["beacon"]}"/>'
+            f'<rect x="{tx + 1:.1f}" y="{tab_y + 1}" width="{tab_w - 2:.1f}" height="3" rx="1.5" fill="url(#horizon)"/>'
+            f"</g>"
+        )
+        # Index token [01] / [02] / [03]
+        idx_lbl = f"0{i + 1}"
+        body.append(text(idx_lbl, tx + 14, tab_y + 24, 10.5, MONO, 600, c["ember"] if sel_static else c["mute"], ls=0.06))
+        body.append(text(".ps1", tx + tab_w - 14 - advance(".ps1", 10.5, MONO, 400), tab_y + 24, 10.5, MONO, 400, c["mute"]))
+        # Script Verb-Noun name
+        nsz = 19.5
+        vw = advance(verb, nsz, CHIVO, 700, -0.01)
+        hy = advance("-", nsz, CHIVO, 700)
         nm_fill = c["ink"] if sel_static else c["mute"]
+        ny = tab_y + 52
         body.append(f'<g class="{cls}nm" style="fill:{nm_fill}">')
-        body.append(text(v, axis - advance(v, NAME_SIZE, CHIVO, NAME_W, -0.01), y, NAME_SIZE, CHIVO, NAME_W, ls=-0.01))
-        body.append(text(n, axis + hyph, y, NAME_SIZE, CHIVO, NAME_W, ls=-0.01))
+        body.append(text(verb, tx + 14, ny, nsz, CHIVO, 700, ls=-0.01))
+        body.append(text(noun, tx + 14 + vw + hy, ny, nsz, CHIVO, 700, ls=-0.01))
         body.append("</g>")
-        # the hyphen as a bar, so its colour can carry the selection
         hy_fill = c["ember"] if sel_static else c["strong"]
-        body.append(f'<rect class="{cls}hy" x="{axis + hyph * 0.14:.1f}" y="{y - NAME_SIZE * 0.36:.1f}" width="{hyph * 0.72:.1f}" height="{NAME_SIZE * 0.12:.1f}" style="fill:{hy_fill}"/>')
-        lines = wrap(syn[i], 16, CHIVO, 400, syn_w)
-        if len(lines) > 2:
-            sys.exit(f"synopsis of {SCRIPTS[i]} needs {len(lines)} lines; the index has room for 2")
-        for j, ln in enumerate(lines):
-            body.append(text(ln, syn_x, y - 22 + j * 21 + (10 if len(lines) == 1 else 0), 16, CHIVO, 400, c["mute"]))
+        body.append(
+            f'<rect class="{cls}hy" x="{tx + 14 + vw + hy * 0.14:.1f}" y="{ny - nsz * 0.34:.1f}" '
+            f'width="{hy * 0.72:.1f}" height="{nsz * 0.12:.1f}" style="fill:{hy_fill}"/>'
+        )
+        # 2-line synopsis cleanly inside card
+        lines = wrap(syn[i], 12.5, CHIVO, 400, tab_w - 28)
+        for j, ln in enumerate(lines[:2]):
+            body.append(text(ln, tx + 14, tab_y + 76 + j * 18, 12.5, CHIVO, 400, c["mute"]))
     css.append(".r0bg,.r1bg,.r2bg{animation-timing-function:step-end}")
 
-    # ---- the console ----
-    body.append(f'<rect x="{CON_X}" y="{CON_Y}" width="{CON_W}" height="{CON_H}" rx="12" fill="{c["code"]}" stroke="{c["line"]}"/>')
-    body.append(f'<clipPath id="con"><rect x="{CON_X + 1}" y="{CON_Y + 1}" width="{CON_W - 2}" height="{CON_H - 2}" rx="11"/></clipPath>')
+    # ---- Full-width console panel (zero top/right clipping!) ----
+    body.append(f'<rect x="{CON_X}" y="{CON_Y}" width="{CON_W}" height="{CON_H}" rx="8" fill="{c["code"]}" stroke="{c["line"]}"/>')
+    body.append(f'<path d="M{CON_X + 8} {CON_Y}h{CON_W - 16}a8 8 0 0 1 8 8v{CON_HEAD_H - 8}H{CON_X}v-{CON_HEAD_H - 8}a8 8 0 0 1 8-8Z" fill="{c["hub"]}"/>')
+    body.append(f'<line x1="{CON_X}" y1="{CON_Y + CON_HEAD_H}" x2="{CON_X + CON_W}" y2="{CON_Y + CON_HEAD_H}" stroke="{c["line"]}"/>')
+    body.append(text("[pwsh]", CON_X + 16, CON_Y + 22.5, 11, MONO, 600, c["steel"]))
+    body.append(text("LIVE REPLAY · -WHATIF SAFE (NOTHING CHANGED)", CON_X + 78, CON_Y + 22.5, 10.5, MONO, 400, c["mute"], ls=0.04))
+
+    body_y = CON_Y + CON_HEAD_H
+    body_h = CON_H - CON_HEAD_H
+    clip_y = body_y + 8
+    clip_h = body_h - 16
+    body.append(f'<clipPath id="con"><rect x="{CON_X + 1}" y="{clip_y}" width="{CON_W - 2}" height="{clip_h}"/></clipPath>')
     body.append('<g clip-path="url(#con)">')
-    cx, cy = CON_X + 20, CON_Y + 30
-    maxw = CON_W - 40
+    cx, cy = CON_X + 18, body_y + 26
+    maxw = CON_W - 36
     char = advance("0", MONO_SIZE, MONO, 400)
     ink = lambda k: c[k] if k != "text" else c["text"]
     still = sess[2]   # the still frame shows the review session as it ends
@@ -384,7 +429,6 @@ def build_svg(theme, rv, syn):
         sid = f"s{si}"
         css.append(windows_css(sid, [(s["start"], s["end"])]))
         body.append(f'<g class="{sid}" style="opacity:{1 if s is still else 0}">')
-        # rows -> lines; a key joins the line before it
         lines, times = [], []
         for kind, val, t in s["rows"]:
             if kind == "key":
@@ -392,7 +436,6 @@ def build_svg(theme, rv, syn):
                 continue
             lines.append((kind, val, None, None, t))
             times.append(t)
-        # scrolling: once more than CAP lines are out, the block moves up a line per line
         shift_at = [(t, max(0, n - CAP)) for n, t in enumerate(times, 1)]
         final_shift = max(0, len(lines) - CAP)
         sk = {0.0: 0}
@@ -407,10 +450,9 @@ def build_svg(theme, rv, syn):
             css.append(windows_css(lc, [(t, s["end"])]))
             parts = []
             if kind in ("cmd",):
-                parts.append(text("PS>", cx, y, MONO_SIZE, MONO, 400, c["mute"]))
+                parts.append(text("PS>", cx, y, MONO_SIZE, MONO, 600, c["ember"]))
                 x0 = cx + char * 4
                 parts.append(text(val, x0, y, MONO_SIZE, MONO, 400, c["ink"], maxw=maxw - char * 4))
-                # typing: a cover in the console colour steps off the command
                 tw = char * len(val)
                 n = len(val)
                 t1 = t + n / TYPE_CPS
@@ -426,20 +468,16 @@ def build_svg(theme, rv, syn):
                 if key:
                     kc = f"{lc}k"
                     css.append(windows_css(kc, [(key_t, s["end"])]))
-                    parts.append(f'<g class="{kc}" style="opacity:{1 if s is still else 0}">{text(key, x, y, MONO_SIZE, MONO, 400, c["ink"])}</g>')
+                    parts.append(f'<g class="{kc}" style="opacity:{1 if s is still else 0}">{text(key, x, y, MONO_SIZE, MONO, 600, c["ink"])}</g>')
                 elif s is still and li == len(lines) - 1:
-                    # the review waits here for you: a caret after its prompt
-                    parts.append(f'<rect class="caret" x="{x:.1f}" y="{y - MONO_SIZE + 2:.1f}" width="{char:.1f}" height="{MONO_SIZE + 2}" fill="{c["ink"]}"/>')
+                    parts.append(f'<rect class="caret" x="{x:.1f}" y="{y - MONO_SIZE + 2:.1f}" width="{char:.1f}" height="{MONO_SIZE + 2}" fill="{c["beacon"]}"/>')
             body.append(f'<g class="{lc}" style="opacity:{1 if s is still else 0}">{"".join(parts)}</g>')
         body.append("</g></g>")
-    # lines wider than the console fade out at its right edge
-    body.append(f'<linearGradient id="fade" x1="0" x2="1"><stop offset="0" stop-color="{c["code"]}" stop-opacity="0"/><stop offset="1" stop-color="{c["code"]}"/></linearGradient>'
-                f'<rect x="{CON_X + CON_W - 56}" y="{CON_Y + 1}" width="55" height="{CON_H - 2}" fill="url(#fade)"/>')
     body.append("</g>")
 
-    # caption under the console
-    cap = f"Replays of real runs against my public repos, {rv['recorded'].split(',')[0]}. Review runs with -WhatIf: nothing changed."
-    body.append(text(cap, CON_X + 2, H - 16, 13, CHIVO, 400, c["mute"]))
+    # Footer note
+    cap = f"Replays of real runs against public repos ({rec_date}). Invoke-RepoReview runs with -WhatIf: nothing changed."
+    body.append(text(cap, CON_X + 2, H - 14, 11.5, CHIVO, 400, c["mute"]))
 
     anim = []
     for rule in css:
@@ -454,11 +492,15 @@ def build_svg(theme, rv, syn):
     style = f"<style>@media (prefers-reduced-motion:no-preference){{{keyframes}{''.join(anim)}{other}{blink}}}</style>"
 
     defs = "".join(f'<path id="{gid}" d="{d}"/>' for gid, d in _glyphs.values() if d)
-    grad = f'<linearGradient id="horizon" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="{c["steel"]}"/><stop offset="1" stop-color="{c["beacon"]}"/></linearGradient>'
-    head = (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W}" height="{H}" role="img">'
-            f"<defs>{grad}{defs}</defs>{style}"
-            f'<rect x="0.5" y="0.5" width="{W - 1}" height="{H - 1}" rx="16" fill="{c["plate"]}" stroke="{c["line"]}"/>'
-            f'<rect x="16" y="1" width="{W - 32}" height="3" rx="1.5" fill="url(#horizon)"/>')
+    grad = (
+        f'<clipPath id="card-clip"><rect x="1" y="1" width="{W - 2}" height="{H - 2}" rx="9.5"/></clipPath>'
+        f'<linearGradient id="horizon" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="{c["steel"]}"/><stop offset="1" stop-color="{c["beacon"]}"/></linearGradient>'
+    )
+    head = (
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W}" height="{H}" role="img">'
+        f"<defs>{grad}{defs}</defs>{style}"
+        f'<rect x="0.5" y="0.5" width="{W - 1}" height="{H - 1}" rx="10" fill="{c["plate"]}" stroke="{c["line"]}"/>'
+    )
     return head + "".join(body) + "</svg>"
 
 
