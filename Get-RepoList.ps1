@@ -73,13 +73,13 @@ function Write-Ink {
         [Parameter(Position = 1)] [ValidateSet('text', 'mute', 'ember', 'amber', 'mint')] [string] $Ink = 'text',
         [switch] $NoNewline
     )
-    $dayshift = "$env:RFS_THEME" -ieq 'dayshift'
+    $dayshift = "$env:RFS_THEME" -ieq 'dayshift' -or "$env:RFS_THEME" -ieq 'light'
     if ($env:NO_COLOR) { Write-Host $Text -NoNewline:$NoNewline; return }
     if ($Host.UI.SupportsVirtualTerminal) {
         $rgb = if ($dayshift) {
-            @{ text = '26;27;30'; mute = '102;106;115'; ember = '192;59;10'; amber = '146;95;0'; mint = '21;121;77' }
+            @{ text = '13;16;22'; mute = '82;91;105'; ember = '173;61;10'; amber = '136;88;0'; mint = '18;114;71' }
         } else {
-            @{ text = '232;230;225'; mute = '138;143;153'; ember = '255;106;61'; amber = '255;194;71'; mint = '61;220;151' }
+            @{ text = '244;245;248'; mute = '179;181;192'; ember = '255;146;84'; amber = '255;194;71'; mint = '61;220;151' }
         }
         $esc = [char]27
         Write-Host "$esc[38;2;$($rgb[$Ink])m$Text$esc[0m" -NoNewline:$NoNewline

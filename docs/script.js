@@ -1,34 +1,100 @@
-// powershell-toolbox page: theme switch, copy buttons, and the console that replays each script's
-// recorded run (window.RUNS, from runs.js). The review replay answers D, A, K, O and Q the way
-// Invoke-RepoReview.ps1 -WhatIf does, from the lines it printed. Without JS the page shows the
-// recordings as text; with reduced motion nothing types, everything prints at once.
+// powershell-toolbox page: Cyclorama Dawn v2.1.0 theme switch (Dark LX 263 default),
+// copy buttons with semantic toasts, and interactive console replaying real runs (window.RUNS).
 (function () {
   var root = document.documentElement, R = window.RUNS;
   var still = matchMedia('(prefers-reduced-motion: reduce)');
-  var light = matchMedia('(prefers-color-scheme: light)');
   var $ = function (s, el) { return (el || document).querySelector(s); };
   var $$ = function (s, el) { return [].slice.call((el || document).querySelectorAll(s)); };
 
-  // ---- theme ----
-  function theme() { return root.dataset.theme || (light.matches ? 'dayshift' : 'nightshift'); }
-  function paint() {
-    var night = theme() === 'nightshift';
-    $('meta[name="theme-color"]').content = night ? '#0C0D10' : '#F6F5F2';
-    $('#theme').setAttribute('aria-label', 'Theme: ' + (night ? 'Nightshift' : 'Dayshift') + '. Switch to ' + (night ? 'Dayshift' : 'Nightshift'));
+  // ---- theme (Dark LX 263 default; Light LX 512 opt-in) ----
+  function currentTheme() { return root.dataset.theme === 'light' ? 'light' : 'dark'; }
+  function applyTheme(next) {
+    if (next === 'light') root.dataset.theme = 'light';
+    else delete root.dataset.theme;
+    var isDark = currentTheme() === 'dark';
+    var cs = $('meta[name="color-scheme"]');
+    if (cs) cs.content = isDark ? 'dark' : 'light';
+    var tc = $('meta[name="theme-color"]');
+    if (tc) tc.content = isDark ? '#050507' : '#F5F7F9';
+    var btn = $('#theme');
+    if (btn) btn.setAttribute('aria-label', isDark ? 'Switch to Alabaster Day light mode' : 'Switch to Beacon Horizon dark mode');
   }
-  $('#theme').addEventListener('click', function () {
-    root.dataset.theme = theme() === 'nightshift' ? 'dayshift' : 'nightshift';
-    try { localStorage.setItem('rfs-theme', root.dataset.theme); } catch (e) {}
-    paint();
+  $('#theme').addEventListener('click', function (e) {
+    var next = currentTheme() === 'dark' ? 'light' : 'dark';
+    var flip = function () {
+      applyTheme(next);
+      try { localStorage.setItem('rfs-theme', next); } catch (err) {}
+    };
+    if (!document.startViewTransition || still.matches) return flip();
+    var x = e.clientX || innerWidth - 40, y = e.clientY || 32;
+    var r = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+    document.startViewTransition(flip).ready.then(function () {
+      root.animate(
+        { clipPath: ['circle(0 at ' + x + 'px ' + y + 'px)', 'circle(' + r + 'px at ' + x + 'px ' + y + 'px)'] },
+        { duration: 520, easing: 'cubic-bezier(.2,.7,.2,1)', pseudoElement: '::view-transition-new(root)' }
+      );
+    });
   });
-  light.addEventListener('change', paint);
-  paint();
+  window.addEventListener('storage', function (e) {
+    if (e.key === 'rfs-theme') applyTheme(e.newValue === 'light' || e.newValue === 'dayshift' ? 'light' : 'dark');
+  });
+  applyTheme(currentTheme());
+
+  // ---- semantic toast notification ----
+  var toastRegion = $('#toast-region');
+  var toastSr = $('#toast-sr');
+  function showToast(kind, tag, message) {
+    if (typeof document.ariaNotify === 'function') {
+      try { document.ariaNotify(message); } catch (e) {}
+    } else if (toastSr) {
+      toastSr.textContent = '';
+      toastSr.textContent = message;
+    }
+    if (!toastRegion) return;
+    if (typeof toastRegion.showPopover === 'function') {
+      try { if (!toastRegion.matches(':popover-open')) toastRegion.showPopover(); } catch (e) {}
+    }
+    var item = document.createElement('div');
+    item.className = 'rfs-toast is-' + kind;
+    var msg = document.createElement('span');
+    msg.className = 'rfs-toast-msg';
+    var k = document.createElement('span');
+    k.className = 'k';
+    k.textContent = tag + ' ';
+    msg.appendChild(k);
+    msg.appendChild(document.createTextNode(message));
+    var close = document.createElement('button');
+    close.type = 'button';
+    close.className = 'rfs-toast-close';
+    close.setAttribute('aria-label', 'Dismiss notification');
+    close.textContent = '×';
+    item.appendChild(msg);
+    item.appendChild(close);
+    toastRegion.appendChild(item);
+
+    var remove = function () {
+      if (item.parentNode) item.parentNode.removeChild(item);
+      if (toastRegion.childElementCount === 0 && typeof toastRegion.hidePopover === 'function') {
+        try { toastRegion.hidePopover(); } catch (e) {}
+      }
+    };
+    close.addEventListener('click', remove);
+    setTimeout(function tick() {
+      if (item.contains(document.activeElement)) return setTimeout(tick, 1200);
+      remove();
+    }, 2600);
+  }
 
   // ---- copy ----
   $$('[data-copy]').forEach(function (b) {
     var label = b.textContent;
     b.addEventListener('click', function () {
-      var done = function (ok) { b.textContent = ok ? 'Copied' : 'Select it'; clearTimeout(b._t); b._t = setTimeout(function () { b.textContent = label; }, 1600); };
+      var done = function (ok) {
+        b.textContent = ok ? '[ok] Copied' : 'Select text';
+        showToast(ok ? 'ok' : 'warn', ok ? '[ok]' : '[!]', ok ? 'Command copied to clipboard.' : 'Copy manually from the code block.');
+        clearTimeout(b._t);
+        b._t = setTimeout(function () { b.textContent = label; }, 1800);
+      };
       if (navigator.clipboard) navigator.clipboard.writeText(b.dataset.copy).then(function () { done(true); }, function () { done(false); });
       else done(false);
     });
@@ -36,9 +102,9 @@
   if (!R) return;
 
   // ---- console output ----
-  var run = 0, screen, cur;                 // run: bumps to cancel whatever is playing
+  var run = 0, screen, cur;
   function wait(ms) { var my = run; return new Promise(function (ok, no) { setTimeout(function () { my === run ? ok() : no('cancelled'); }, still.matches ? 0 : ms); }); }
-  function put(line, into) {                // line: [[ink, text], ...]
+  function put(line, into) {
     var el = into || document.createElement('span');
     line.forEach(function (seg) {
       var s = document.createElement('span');
@@ -52,14 +118,14 @@
   }
   function caret(on) { var c = $('.caret', screen); if (c) c.remove(); if (on && cur) cur.appendChild(Object.assign(document.createElement('span'), { className: 'caret' })); }
   function typed(cmd) {
-    var el = put([['mute', 'PS> ']]), t = document.createElement('span');
+    var el = put([['ember', 'PS> ']]), t = document.createElement('span');
     el.appendChild(t);
     var i = 0, step = function () { if (i >= cmd.length) return Promise.resolve(); t.textContent += cmd[i++]; return wait(28).then(step); };
     return still.matches ? (t.textContent = cmd, Promise.resolve()) : step();
   }
   function lines(list, ms) { return list.reduce(function (p, l) { return p.then(function () { put(l); return wait(ms); }); }, Promise.resolve()); }
   function play(name) {
-    if (name !== 'review' && !R[name]) return;   // a script with no recording keeps its static panel
+    if (name !== 'review' && !R[name]) return;
     run++; screen = $('#run-' + name + ' .screen'); screen.textContent = ''; cur = null;
     if (name === 'review') return review();
     var cmds = R[name];
@@ -136,9 +202,12 @@
       e.preventDefault(); to = (to + tabs.length) % tabs.length; tabs[to].focus(); select(tabs[to], true);
     });
   });
-  $('#replay').addEventListener('click', function () { var t = $('.index [aria-selected="true"]'); if (t.dataset.run !== 'review') return play(t.dataset.run); run++; screen = $('#run-review .screen'); screen.textContent = ''; review(true); });
+  $('#replay').addEventListener('click', function () {
+    var t = $('.index [aria-selected="true"]');
+    if (t.dataset.run !== 'review') return play(t.dataset.run);
+    run++; screen = $('#run-review .screen'); screen.textContent = ''; review(true);
+  });
 
-  // on load: the review plays its first two answers, then waits for yours
   select($('#tab-review'), false);
   run++; screen = $('#run-review .screen'); screen.textContent = '';
   review(true);

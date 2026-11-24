@@ -1,10 +1,10 @@
-## What changed
+## Summary
 
-## Why
+- Plain summary of what changed and why.
 
-## Checked
+## Verification
 
-- [ ] `Invoke-ScriptAnalyzer -Path . -Settings ./PSScriptAnalyzerSettings.psd1` is clean
-- [ ] `Invoke-Pester ./tests` passes
-- [ ] Ran it by hand on: <!-- e.g. Windows 11 · PowerShell 5.1 -->
-- [ ] README table and CHANGELOG updated if behaviour changed
+- [ ] Tested locally on target OS/runtime (note OS & version below)
+- [ ] CLI honors `NO_COLOR`, non-TTY stdout, and exit codes `0` / `1` / `2` (if applicable)
+- [ ] Web UI uses `rfs.css` + `rfs-components.css`, below-header scrollbars, and zero native `alert()`/`confirm()`/`prompt()` (if applicable)
+- [ ] Updated README / `cover.toml` if commands or screenshots changed

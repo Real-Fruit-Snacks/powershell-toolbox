@@ -1,13 +1,14 @@
-# Security
+# Security Policy
 
-These scripts run `gh` with your own login and can delete repos (`Invoke-RepoReview.ps1`). They send nothing anywhere except GitHub, through `gh`.
+## Scope
 
-## Supported versions
+Real-Fruit-Snacks tools run locally on your machine with no hosted backend, no user accounts, and no telemetry. Security reports apply to local privilege handling, credential or certificate storage, command execution, file parsing, and release integrity.
 
-Only the latest release gets fixes.
+## Reporting a Vulnerability
 
-## Reporting
+Please do **not** open a public GitHub issue for an undisclosed vulnerability.
 
-Use [private vulnerability reporting](https://github.com/Real-Fruit-Snacks/powershell-toolbox/security/advisories/new). Don't open a public issue. I'll answer within a week.
+1. Use **GitHub Private Vulnerability Reporting** under this repository's **Security** tab (`Security -> Advisories -> Report a vulnerability`).
+2. Include the affected version (`<tool> --version`), OS/platform, reproduction steps, and expected vs. actual behavior.
 
-Worth reporting: anything that could delete or archive a repo without the typed confirmation, act on a repo other than the one shown, or write a token or credential into a log or digest file.
+You will receive an acknowledgement within 7 days and a plain-language fix or mitigation plan once reproduced.

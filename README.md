@@ -100,7 +100,7 @@ Delete asks a second time: you type the repo name exactly, and case counts. Ever
 | Variable | Effect |
 |---|---|
 | `RFS_PROJECTS` | Your projects folder. Default `$HOME\Projects` (`C:\Users\<you>\Projects`). Relative `-OutFile` / `-LogPath` values land here; absolute paths are used as given. |
-| `RFS_THEME=dayshift` | Light-terminal palette (Dayshift). Nightshift (dark) is the default. |
+| `RFS_THEME=light` | Light-terminal palette (`light` or `dayshift`). Dark (`LX 263`) is the default. |
 | `NO_COLOR=1` | Plain text, no color at all ([no-color.org](https://no-color.org)) |
 
 To set a different projects folder for good: `[Environment]::SetEnvironmentVariable('RFS_PROJECTS', 'D:\code', 'User')`, then open a new window.

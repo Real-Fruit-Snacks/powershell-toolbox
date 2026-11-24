@@ -25,10 +25,12 @@ ROOT = os.path.normpath(os.path.join(HERE, "..", ".."))
 DOCS = os.path.join(ROOT, "docs")
 RUNS = os.path.join(HERE, "runs")
 
-# The five inks Write-Ink prints, by the RGB it prints them in (Nightshift, then Dayshift).
+# The five inks Write-Ink prints, by RGB (legacy Nightshift/Dayshift + Cyclorama Dawn v2.1.0).
 INKS = {
     (232, 230, 225): "text", (138, 143, 153): "mute", (255, 106, 61): "ember", (255, 194, 71): "amber", (61, 220, 151): "mint",
     (26, 27, 30): "text", (102, 106, 115): "mute", (192, 59, 10): "ember", (146, 95, 0): "amber", (21, 121, 77): "mint",
+    (244, 245, 248): "text", (179, 181, 192): "mute", (255, 146, 84): "ember",
+    (13, 16, 22): "text", (82, 91, 105): "mute", (173, 61, 10): "ember", (136, 88, 0): "amber", (18, 114, 71): "mint",
 }
 ANSI = re.compile(r"\x1b\[38;2;(\d+);(\d+);(\d+)m(.*?)\x1b\[0m")
 
@@ -175,7 +177,7 @@ def splice(path, name, body):
 
 # ---------------------------------------------------------------- text as paths
 _fonts, _glyphs = {}, {}
-CHIVO, MONO = "chivo-latin-wght.woff2", "chivo-mono-latin-wght.woff2"
+CHIVO, MONO = "albert-sans-latin.woff2", "azeret-mono-latin.woff2"
 
 
 def glyphset(fname, wght):
@@ -244,10 +246,10 @@ def wrap(s, size, fname, wght, width):
 
 # ---------------------------------------------------------------- the README index, animated
 THEMES = {
-    "dark": dict(plate="#13151A", line="#262A33", strong="#636872", ink="#E8E6E1", mute="#8A8F99", code="#070809",
-                 text="#E8E6E1", ember="#FF6A3D", amber="#FFC247", mint="#3DDC97", sel="#1A1D24"),
-    "light": dict(plate="#FFFFFF", line="#D6D3CB", strong="#89867F", ink="#1A1B1E", mute="#666A73", code="#F6F5F2",
-                  text="#1A1B1E", ember="#C03B0A", amber="#925F00", mint="#15794D", sel="#ECEAE4"),
+    "dark": dict(plate="#0C0C10", line="#2A2C35", strong="#676B78", ink="#F4F5F8", mute="#B3B5C0", code="#050507",
+                 text="#F4F5F8", steel="#74B8E8", ember="#FF9254", beacon="#F06E2B", amber="#FFC247", mint="#3DDC97", sel="#14141A"),
+    "light": dict(plate="#FFFFFF", line="#D2DAE2", strong="#6E7784", ink="#0D1016", mute="#525B69", code="#F5F7F9",
+                  text="#0D1016", steel="#164669", ember="#AD3D0A", beacon="#BD4811", amber="#885800", mint="#127247", sel="#E9EEF3"),
 }
 W, H = 1000, 584
 CYCLE = 21.0
@@ -452,9 +454,11 @@ def build_svg(theme, rv, syn):
     style = f"<style>@media (prefers-reduced-motion:no-preference){{{keyframes}{''.join(anim)}{other}{blink}}}</style>"
 
     defs = "".join(f'<path id="{gid}" d="{d}"/>' for gid, d in _glyphs.values() if d)
+    grad = f'<linearGradient id="horizon" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="{c["steel"]}"/><stop offset="1" stop-color="{c["beacon"]}"/></linearGradient>'
     head = (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W}" height="{H}" role="img">'
-            f"<defs>{defs}</defs>{style}"
-            f'<rect x="0.5" y="0.5" width="{W - 1}" height="{H - 1}" rx="20" fill="{c["plate"]}" stroke="{c["line"]}"/>')
+            f"<defs>{grad}{defs}</defs>{style}"
+            f'<rect x="0.5" y="0.5" width="{W - 1}" height="{H - 1}" rx="16" fill="{c["plate"]}" stroke="{c["line"]}"/>'
+            f'<rect x="16" y="1" width="{W - 32}" height="3" rx="1.5" fill="url(#horizon)"/>')
     return head + "".join(body) + "</svg>"
 
 
