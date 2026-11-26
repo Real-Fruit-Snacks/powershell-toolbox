@@ -171,7 +171,7 @@ jobs:
           if ($found) { throw 'PSScriptAnalyzer found problems' }
 
           Write-Host '::group::Art'
-          $art = 'docs/assets/index-dark.svg', 'docs/assets/index-light.svg', 'docs/runs.js', 'docs/index.html', 'README.md'
+          $art = 'docs/assets/index-dark.svg', 'docs/assets/index-light.svg', 'docs/runs.js', 'docs/index.html', 'README.md', 'docs/USAGE.md'
           $before = $art | ForEach-Object { (Get-FileHash -LiteralPath $_).Hash }
           & ./offline/venv/Scripts/python.exe docs/art/make-art.py
           if ($LASTEXITCODE) { throw 'make-art.py failed' }

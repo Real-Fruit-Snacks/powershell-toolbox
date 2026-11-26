@@ -2,7 +2,7 @@
 
     docs/assets/index-dark.svg, index-light.svg   the README's animated index (text drawn as paths)
     docs/runs.js                                  the data the page replays
-    docs/index.html, README.md                    the transcripts between <!-- run:NAME --> markers
+    docs/index.html, README.md, docs/USAGE.md     the transcripts between <!-- run:NAME --> markers
 
 The runs are real console output with its ANSI colours, recorded by docs/art/Record-Runs.ps1.
 Each script's one-line description is its .SYNOPSIS, read from the script itself. The output
@@ -540,7 +540,8 @@ def main():
     width = max(len(TRY[s][0]) for s in SCRIPTS) + 3
     rows += ["", "```powershell"] + [f"{TRY[s][0].ljust(width)}# {TRY[s][1]}" for s in SCRIPTS] + ["```"]
     splice(readme, "index", "\n".join(rows) + "\n")
-    splice(readme, "review", "\n```text\n" + text_transcript([(rv["cmd"], rv["short"])]) + "\n```\n")
+    usage = os.path.join(DOCS, "USAGE.md")
+    splice(usage, "review", "\n```text\n" + text_transcript([(rv["cmd"], rv["short"])]) + "\n```\n")
 
     for theme in THEMES:
         _glyphs.clear()
