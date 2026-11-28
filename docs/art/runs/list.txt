@@ -11,7 +11,6 @@ certapi                     public C#         2026-11-22 mTLS API client for the
 cred-spray                  public Python     2026-11-24 Bounded, protocol-aware credential spraying
 hash-bait                   public Rust       2026-11-24 Drop poisoned shortcuts on SMB shares to coerce NTLM hashes
 identity-gen                public HTML       2026-11-14 Offline generator for throwaway signup identities
-one-billion-pixels          public TypeScript 2026-11-24 Excavate one billion pixels in your browser, offline
 open-file                   public TypeScript 2026-11-16 Learn and play chess in your browser, offline
 port-sync                   public Rust       2026-11-13 Keeps qBittorrent's port synced to Proton VPN
 powershell-toolbox          public PowerShell 2026-11-22 A grab-bag of my PowerShell scripts, each one standalone
